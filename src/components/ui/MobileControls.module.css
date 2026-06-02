@@ -1,0 +1,144 @@
+/* ── Root container ───────────────────────────────────────────────────────── */
+
+.controls {
+  /* Hidden on desktop (fine pointer = mouse). Shown on touch screens. */
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  pointer-events: none;
+  user-select: none;
+  touch-action: none;
+  z-index: 100;
+}
+
+@media (pointer: coarse) {
+  .controls {
+    display: block;
+    /* Respect iOS home indicator */
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+}
+
+/* ── Joystick ─────────────────────────────────────────────────────────────── */
+
+.joystickBase {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  pointer-events: all;
+  touch-action: none;
+  user-select: none;
+  /* Subtle inner ring so players can see the range */
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.07);
+}
+
+.joystickThumb {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.85);
+  pointer-events: none;
+  /* Thumb moves via JS — no CSS transition so it tracks the finger exactly */
+}
+
+/* ── Action buttons ───────────────────────────────────────────────────────── */
+
+.actionArea {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  pointer-events: all;
+  align-items: center;
+}
+
+.actionBtn {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: rgba(12, 10, 8, 0.72);
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  color: #ccc;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  touch-action: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  /* Minimum 44px Apple tap target — already 70px */
+}
+
+.actionBtn:active {
+  background: rgba(245, 197, 66, 0.22);
+}
+
+/* ── Talk button states ───────────────────────────────────────────────────── */
+
+.talkBtn.canTalk {
+  border-color: #f5c542;
+  color: #f5c542;
+  box-shadow: 0 0 10px rgba(245, 197, 66, 0.28);
+}
+
+.talkBtn.cantTalk {
+  opacity: 0.35;
+}
+
+/* ── Quest button ─────────────────────────────────────────────────────────── */
+
+.questBtn {
+  border-color: rgba(86, 204, 242, 0.4);
+  color: #56ccf2;
+}
+
+.questBtn:active {
+  background: rgba(86, 204, 242, 0.18);
+  border-color: #56ccf2;
+}
+
+/* ── Landscape phones: shrink controls slightly so they don't eat too much ── */
+
+@media (pointer: coarse) and (max-height: 500px) {
+  .joystickBase {
+    width: 96px;
+    height: 96px;
+    bottom: 16px;
+    left: 16px;
+  }
+  .joystickThumb {
+    width: 38px;
+    height: 38px;
+  }
+  .actionArea {
+    bottom: 16px;
+    right: 16px;
+    gap: 10px;
+  }
+  .actionBtn {
+    width: 58px;
+    height: 58px;
+    font-size: 12px;
+  }
+  .controls {
+    height: 160px;
+  }
+}

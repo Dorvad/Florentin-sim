@@ -8,4 +8,10 @@
   color: rgba(255, 255, 255, 0.4);
   pointer-events: none;
   user-select: none;
+  z-index: 50;
+}
+
+/* Hide keyboard hint on touch screens — mobile controls are visible instead */
+@media (pointer: coarse) {
+  .hint { display: none; }
 }

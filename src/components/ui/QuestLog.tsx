@@ -11,11 +11,13 @@ const STATUS_LABEL: Record<string, string> = {
 }
 
 // ── QuestLog ───────────────────────────────────────────────────────────────
-// Toggle with Q key (wired in App.tsx). Lists quests and their objectives.
+// Toggle with Q key (desktop) or the Quests button (mobile).
+// The ✕ close button works on all screen sizes.
 
 export function QuestLog() {
-  const quests = useGameStore((s) => s.quests)
+  const quests         = useGameStore((s) => s.quests)
   const activeQuestLog = useGameStore((s) => s.activeQuestLog)
+  const toggleQuestLog = useGameStore((s) => s.toggleQuestLog)
 
   if (!activeQuestLog) return null
 
@@ -24,10 +26,21 @@ export function QuestLog() {
   return (
     <div className={styles.overlay}>
       <div className={styles.panel}>
-        <div className={styles.header}>Quest Log</div>
+        <div className={styles.header}>
+          <span className={styles.headerTitle}>Quest Log</span>
+          <button
+            className={styles.closeBtn}
+            onClick={toggleQuestLog}
+            aria-label="Close quest log"
+          >
+            ✕
+          </button>
+        </div>
+
         {visible.length === 0 && (
           <p className={styles.empty}>No quests yet. Talk to people.</p>
         )}
+
         {visible.map((questState) => {
           const def = questData.find((q) => q.id === questState.questId)
           if (!def) return null
@@ -50,6 +63,7 @@ export function QuestLog() {
             </div>
           )
         })}
+
         <div className={styles.hint}>Press Q to close</div>
       </div>
     </div>

@@ -7,6 +7,7 @@
   justify-content: center;
   padding: 24px;
   pointer-events: none;
+  z-index: 60;
 }
 
 .box {
@@ -49,7 +50,9 @@
   border-radius: 8px;
   color: #ddd;
   font-size: 14px;
+  /* At least 44px tall for tap targets */
   padding: 10px 16px;
+  min-height: 44px;
   text-align: left;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s;
@@ -61,6 +64,11 @@
   color: #fff;
 }
 
+.choiceBtn:active {
+  background: rgba(245, 197, 66, 0.25);
+  border-color: #f5c542;
+}
+
 .nextBtn {
   margin-top: 14px;
   float: right;
@@ -70,11 +78,35 @@
   color: #aaa;
   font-size: 13px;
   padding: 6px 14px;
+  min-height: 40px;
   cursor: pointer;
   transition: color 0.15s, border-color 0.15s;
 }
 
-.nextBtn:hover {
-  color: #fff;
-  border-color: #fff;
+.nextBtn:hover  { color: #fff; border-color: #fff; }
+.nextBtn:active { color: #fff; border-color: #fff; }
+
+/* ── Touch screens — push box above the control strip ────────────────────── */
+
+@media (pointer: coarse) {
+  .overlay {
+    /* 200px control strip + 12px gap */
+    bottom: 212px;
+    padding: 12px 16px;
+  }
+  .box {
+    padding: 16px 18px;
+    max-width: 100%;
+  }
+  .text       { font-size: 15px; min-height: 0; }
+  .choiceBtn  { font-size: 15px; padding: 12px 16px; }
+  .speaker    { font-size: 12px; }
+}
+
+/* Landscape phone — less vertical room */
+@media (pointer: coarse) and (max-height: 500px) {
+  .overlay { bottom: 172px; padding: 8px 12px; }
+  .box     { padding: 10px 14px; }
+  .text    { font-size: 14px; }
+  .choices { gap: 6px; margin-top: 10px; }
 }

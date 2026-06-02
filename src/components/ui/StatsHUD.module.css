@@ -12,6 +12,7 @@
   min-width: 180px;
   pointer-events: none;
   user-select: none;
+  z-index: 50;
 }
 
 .stat {
@@ -46,4 +47,26 @@
   height: 100%;
   border-radius: 4px;
   transition: width 0.4s ease;
+}
+
+/* ── Mobile / tablet ──────────────────────────────────────────────────────── */
+
+@media (pointer: coarse), (max-width: 768px) {
+  .hud {
+    top: max(12px, env(safe-area-inset-top, 12px));
+    left: max(12px, env(safe-area-inset-left, 12px));
+    padding: 8px 12px;
+    min-width: 0;
+    gap: 5px;
+    border-radius: 8px;
+  }
+  .stat   { gap: 6px; font-size: 11px; }
+  .label  { width: 60px; font-size: 10px; }
+  .barBg  { height: 6px; }
+}
+
+/* Portrait phone: stack more compactly, even smaller */
+@media (pointer: coarse) and (max-width: 430px) {
+  .hud    { padding: 6px 10px; }
+  .label  { width: 52px; }
 }
