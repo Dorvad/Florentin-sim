@@ -39,7 +39,9 @@ export function DialogueBox() {
   return (
     <div className={styles.overlay}>
       <div className={styles.box}>
-        <div className={styles.speaker}>{currentLine.speaker}</div>
+        {currentLine.speaker && (
+          <div className={styles.speaker}>{currentLine.speaker}</div>
+        )}
         <div className={styles.text}>{currentLine.text}</div>
 
         {hasChoices ? (

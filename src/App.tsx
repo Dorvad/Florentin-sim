@@ -6,6 +6,8 @@ import { DialogueBox } from '@/components/ui/DialogueBox'
 import { QuestLog } from '@/components/ui/QuestLog'
 import { ControlsHint } from '@/components/ui/ControlsHint'
 import { MobileControls } from '@/components/ui/MobileControls'
+import { StatFeedback } from '@/components/ui/StatFeedback'
+import { QuestNotification } from '@/components/ui/QuestNotification'
 import { useGameStore } from '@/stores/gameStore'
 
 export default function App() {
@@ -36,7 +38,6 @@ export default function App() {
         shadows
         camera={{ position: [0, 8, 10], fov: 55, near: 0.1, far: 200 }}
         style={{ position: 'fixed', inset: 0 }}
-        // Prevent iOS bounce/scroll on the canvas itself
         data-noscroll=""
       >
         <GameWorld />
@@ -44,6 +45,8 @@ export default function App() {
 
       {/* ── 2D UI overlay ─────────────────────────────────────────────── */}
       <StatsHUD />
+      <StatFeedback />
+      <QuestNotification />
       <DialogueBox />
       <QuestLog />
       <ControlsHint />

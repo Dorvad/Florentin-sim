@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { GameState, PlayerStats, StatDelta, QuestState, ActiveDialogue } from '@/types'
+import type { GameState, PlayerStats, StatDelta, QuestState, ActiveDialogue, GameArea } from '@/types'
 import { questData } from '@/data/quests'
 
 // ── Initial state ──────────────────────────────────────────────────────────
@@ -34,6 +34,10 @@ interface GameActions {
   completeObjective: (questId: string, objectiveId: string) => void
   completeQuest: (questId: string) => void
   toggleQuestLog: () => void
+  setCurrentArea: (area: GameArea) => void
+  markApartmentInteracted: () => void
+  clearStatFeedback: () => void
+  clearQuestNotification: () => void
 }
 
 const STAT_MIN: Record<keyof PlayerStats, number> = {
@@ -61,6 +65,10 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   quests: initialQuests,
   activeDialogue: null,
   activeQuestLog: false,
+  currentArea: 'apartment',
+  apartmentInteracted: false,
+  statFeedback: [],
+  questNotification: null,
 
   // ── Actions ───────────────────────────────────────────────────────────────
 
@@ -69,10 +77,15 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   applyStatDeltas: (deltas) =>
     set((state) => {
       const updated = { ...state.playerStats }
-      for (const { stat, amount } of deltas) {
-        updated[stat] = clampStat(stat, updated[stat] + amount) as never
+      const nonZero: StatDelta[] = []
+      for (const delta of deltas) {
+        const prev = updated[delta.stat]
+        const next = clampStat(delta.stat, prev + delta.amount)
+        const actual = next - prev
+        updated[delta.stat] = next as never
+        if (actual !== 0) nonZero.push({ stat: delta.stat, amount: actual })
       }
-      return { playerStats: updated }
+      return { playerStats: updated, statFeedback: nonZero }
     }),
 
   startDialogue: (dialogue) => set({ activeDialogue: dialogue }),
@@ -89,11 +102,13 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
     set((state) => {
       const existing = state.quests[questId]
       if (!existing || existing.status === 'active' || existing.status === 'completed') return {}
+      const def = questData.find((q) => q.id === questId)
       return {
         quests: {
           ...state.quests,
           [questId]: { ...existing, status: 'active' },
         },
+        questNotification: def?.title ?? null,
       }
     }),
 
@@ -129,4 +144,12 @@ export const useGameStore = create<GameState & GameActions>((set, get) => ({
   },
 
   toggleQuestLog: () => set((state) => ({ activeQuestLog: !state.activeQuestLog })),
+
+  setCurrentArea: (area) => set({ currentArea: area }),
+
+  markApartmentInteracted: () => set({ apartmentInteracted: true }),
+
+  clearStatFeedback: () => set({ statFeedback: [] }),
+
+  clearQuestNotification: () => set({ questNotification: null }),
 }))

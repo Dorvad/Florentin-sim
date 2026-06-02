@@ -2,10 +2,17 @@ import type { NPCData } from '@/types'
 
 // ── NPC definitions ────────────────────────────────────────────────────────
 // position: [x, y, z] in world units. y=0 is ground level.
-// color: fallback placeholder colour if modelPath is absent.
-// modelPath: public-folder path to the character's .glb asset.
+// Moti is positioned just outside the building entrance for the street scene.
 
 export const npcData: NPCData[] = [
+  {
+    id: 'moti',
+    name: 'Moti',
+    position: [3, 0, 2],
+    color: '#8B7355',
+    dialogueTreeId: 'moti_intro',
+    questIds: ['move_mystery_bicycle', 'clear_your_name'],
+  },
   {
     id: 'avi',
     name: 'Avi',
@@ -28,7 +35,7 @@ export const npcData: NPCData[] = [
     name: 'Moshe',
     position: [8, 0, -3],
     color: '#c8a87e',
-    dialogueTreeId: 'dana_intro', // reusing as placeholder until Moshe has dialogue
+    dialogueTreeId: 'dana_intro',
     modelPath: '/assets/models/npc_worker.glb',
   },
   {
@@ -39,5 +46,4 @@ export const npcData: NPCData[] = [
     dialogueTreeId: 'dana_intro',
     modelPath: '/assets/models/npc_punk.glb',
   },
-  // TODO: Add more NPCs here (shopkeepers, friends, strangers, etc.)
 ]

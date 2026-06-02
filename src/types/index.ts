@@ -1,5 +1,7 @@
 import type { Vector3Tuple } from 'three'
 
+export type { Vector3Tuple }
+
 // ── Player ────────────────────────────────────────────────────────────────────
 
 export interface PlayerStats {
@@ -23,20 +25,20 @@ export interface DialogueLine {
   text: string
 }
 
+export type GameArea = 'apartment' | 'street'
+
 export interface DialogueChoice {
   label: string
-  // Leads to a node id, or null to end dialogue
   nextNode: string | null
-  // Optional stat effects triggered by choosing this option
   effects?: StatDelta[]
-  // Optional quest to start when this choice is made
   startsQuest?: string
+  // Triggers a scene/area transition when chosen
+  transitionArea?: GameArea
 }
 
 export interface DialogueNode {
   id: string
   lines: DialogueLine[]
-  // When choices are absent the dialogue auto-advances or ends
   choices?: DialogueChoice[]
 }
 
@@ -52,11 +54,21 @@ export interface NPCData {
   id: string
   name: string
   position: Vector3Tuple
-  color: string          // fallback placeholder colour when no model is loaded
-  modelPath?: string     // public-folder path to the character's .glb asset
+  color: string
+  modelPath?: string
   dialogueTreeId: string
-  // questIds this NPC can offer (looked up from questData)
   questIds?: string[]
+}
+
+// ── Interactable Objects (apartment props, quest items, etc.) ─────────────────
+
+export interface InteractableObjectData {
+  id: string
+  name: string
+  position: Vector3Tuple
+  color: string
+  size: Vector3Tuple
+  dialogueTreeId: string
 }
 
 // ── Quests ────────────────────────────────────────────────────────────────────
@@ -89,10 +101,10 @@ export interface QuestState {
 export interface BuildingData {
   id: string
   position: Vector3Tuple
-  size: Vector3Tuple     // [width, height, depth]
+  size: Vector3Tuple
   color: string
-  modelPath?: string     // public-folder path to the building's .glb asset
-  rotation?: number      // Y rotation in radians (default 0)
+  modelPath?: string
+  rotation?: number
   label?: string
 }
 
@@ -100,10 +112,16 @@ export interface StreetTileData {
   id: string
   modelPath: string
   position: Vector3Tuple
-  rotation?: number      // Y rotation in radians
+  rotation?: number
 }
 
-// ── Game State (top-level shape used by the store) ────────────────────────────
+// ── Game State ────────────────────────────────────────────────────────────────
+
+export interface ActiveDialogue {
+  treeId: string
+  nodeId: string
+  npcName: string
+}
 
 export interface GameState {
   playerPosition: Vector3Tuple
@@ -111,10 +129,8 @@ export interface GameState {
   quests: Record<string, QuestState>
   activeDialogue: ActiveDialogue | null
   activeQuestLog: boolean
-}
-
-export interface ActiveDialogue {
-  treeId: string
-  nodeId: string
-  npcName: string
+  currentArea: GameArea
+  apartmentInteracted: boolean
+  statFeedback: StatDelta[]
+  questNotification: string | null
 }

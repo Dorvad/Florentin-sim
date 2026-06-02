@@ -2,13 +2,15 @@ import { useRef, useCallback } from 'react'
 import { useInputStore } from '@/stores/inputStore'
 import { useGameStore } from '@/stores/gameStore'
 import { npcData } from '@/data/npcs'
+import { apartmentObjects } from '@/data/apartment'
 import {
   getNearestNPCInRange,
+  getNearestObjectInRange,
   interactWithNearestNPC,
+  interactWithNearestObject,
 } from '@/systems/interactionSystem'
 import styles from './MobileControls.module.css'
 
-// Max pixel travel of the joystick thumb from the base centre.
 const THUMB_TRAVEL = 38
 
 // ── VirtualJoystick ────────────────────────────────────────────────────────
@@ -38,7 +40,6 @@ function VirtualJoystick() {
       const ny = dy * scale
 
       thumb.style.transform = `translate(calc(-50% + ${nx}px), calc(-50% + ${ny}px))`
-
       setJoystick(nx / THUMB_TRAVEL, ny / THUMB_TRAVEL)
     },
     [setJoystick]
@@ -91,15 +92,27 @@ function VirtualJoystick() {
 // ── ActionButtons ──────────────────────────────────────────────────────────
 
 function ActionButtons() {
-  const playerPosition = useGameStore((s) => s.playerPosition)
-  const activeDialogue = useGameStore((s) => s.activeDialogue)
-  const toggleQuestLog = useGameStore((s) => s.toggleQuestLog)
+  const playerPosition     = useGameStore((s) => s.playerPosition)
+  const activeDialogue     = useGameStore((s) => s.activeDialogue)
+  const currentArea        = useGameStore((s) => s.currentArea)
+  const apartmentInteracted = useGameStore((s) => s.apartmentInteracted)
+  const toggleQuestLog     = useGameStore((s) => s.toggleQuestLog)
 
-  const nearestNPC = getNearestNPCInRange(playerPosition, npcData)
-  const canTalk    = nearestNPC !== null && activeDialogue === null
+  let canInteract: boolean
+  let handleInteract: () => void
+  let interactLabel: string
 
-  function handleTalk() {
-    interactWithNearestNPC(playerPosition, npcData)
+  if (currentArea === 'apartment') {
+    const visible = apartmentObjects.filter(
+      (o) => o.id !== 'apartment_door' || apartmentInteracted
+    )
+    canInteract = getNearestObjectInRange(playerPosition, visible) !== null && activeDialogue === null
+    handleInteract = () => interactWithNearestObject(playerPosition, visible)
+    interactLabel = 'Inspect'
+  } else {
+    canInteract = getNearestNPCInRange(playerPosition, npcData) !== null && activeDialogue === null
+    handleInteract = () => interactWithNearestNPC(playerPosition, npcData)
+    interactLabel = 'Talk'
   }
 
   return (
@@ -112,12 +125,12 @@ function ActionButtons() {
         Quests
       </button>
       <button
-        className={`${styles.actionBtn} ${styles.talkBtn} ${canTalk ? styles.canTalk : styles.cantTalk}`}
-        onPointerDown={canTalk ? handleTalk : undefined}
-        aria-label="Talk to NPC"
-        aria-disabled={!canTalk}
+        className={`${styles.actionBtn} ${styles.talkBtn} ${canInteract ? styles.canTalk : styles.cantTalk}`}
+        onPointerDown={canInteract ? handleInteract : undefined}
+        aria-label={interactLabel}
+        aria-disabled={!canInteract}
       >
-        Talk
+        {interactLabel}
       </button>
     </div>
   )

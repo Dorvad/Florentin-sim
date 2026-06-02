@@ -2,9 +2,10 @@ import { dialogueTrees } from '@/data/dialogues'
 import { useGameStore } from '@/stores/gameStore'
 import type { DialogueNode, DialogueChoice } from '@/types'
 
+// Trees that count as "apartment object interactions" for gating the exit door
+const APARTMENT_OBJECT_TREES = new Set(['fridge_note', 'mirror', 'mattress'])
+
 // ── Dialogue system helpers ────────────────────────────────────────────────
-// These functions are called by UI components and NPC interaction logic.
-// They read/write through the game store, keeping UI components thin.
 
 export function openDialogue(treeId: string, npcName: string): void {
   const tree = dialogueTrees[treeId]
@@ -34,6 +35,22 @@ export function selectChoice(choice: DialogueChoice): void {
   // Start a quest if the choice triggers one
   if (choice.startsQuest) {
     store.startQuest(choice.startsQuest)
+  }
+
+  // Mark apartment as interacted when player makes a choice on an object tree
+  const treeId = store.activeDialogue?.treeId
+  if (treeId && APARTMENT_OBJECT_TREES.has(treeId)) {
+    store.markApartmentInteracted()
+  }
+
+  // Handle area transition (e.g. leaving the apartment via the door)
+  if (choice.transitionArea) {
+    store.endDialogue()
+    store.setCurrentArea(choice.transitionArea)
+    if (choice.transitionArea === 'street') {
+      store.setPlayerPosition([0, 0, 0])
+    }
+    return
   }
 
   // Advance or end dialogue
