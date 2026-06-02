@@ -1,16 +1,23 @@
 import { Suspense } from 'react'
 import { Sky, Environment, useGLTF } from '@react-three/drei'
-import { buildingData } from '@/data/world'
+import { buildingData, streetTiles } from '@/data/world'
 import { npcData } from '@/data/npcs'
 import { Ground } from './Ground'
-import { Street } from './Street'
 import { Building } from './Building'
+import { StreetTile } from './StreetTile'
 import { Player } from '@/components/player/Player'
 import { NPC } from '@/components/npcs/NPC'
 import { useNPCInteraction } from '@/hooks/useNPCInteraction'
 
 // Preload all NPC models as soon as the module is imported
 npcData.forEach((npc) => { if (npc.modelPath) useGLTF.preload(npc.modelPath) })
+
+// Preload all building GLB models
+buildingData.forEach((b) => { if (b.modelPath) useGLTF.preload(b.modelPath) })
+
+// Preload all street tile GLB models (deduplicate by path)
+const uniqueStreetPaths = [...new Set(streetTiles.map((t) => t.modelPath))]
+uniqueStreetPaths.forEach((p) => useGLTF.preload(p))
 
 // ── GameWorld ──────────────────────────────────────────────────────────────
 // Root 3D scene. Add new world regions, lighting rigs, or environment
@@ -42,14 +49,22 @@ export function GameWorld() {
         <Environment preset="city" />
       </Suspense>
 
-      {/* ── Ground & streets ────────────────────────────────────────────── */}
+      {/* ── Ground ──────────────────────────────────────────────────────── */}
       <Ground />
-      <Street />
+
+      {/* ── Street tiles (data-driven) ───────────────────────────────────── */}
+      <Suspense fallback={null}>
+        {streetTiles.map((t) => (
+          <StreetTile key={t.id} {...t} />
+        ))}
+      </Suspense>
 
       {/* ── Buildings (data-driven) ──────────────────────────────────────── */}
-      {buildingData.map((b) => (
-        <Building key={b.id} data={b} />
-      ))}
+      <Suspense fallback={null}>
+        {buildingData.map((b) => (
+          <Building key={b.id} data={b} />
+        ))}
+      </Suspense>
 
       {/* ── NPCs (data-driven) ───────────────────────────────────────────── */}
       {npcData.map((npc) => (

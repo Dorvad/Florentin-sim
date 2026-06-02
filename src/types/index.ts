@@ -91,8 +91,16 @@ export interface BuildingData {
   position: Vector3Tuple
   size: Vector3Tuple     // [width, height, depth]
   color: string
-  // modelPath?: string  // TODO: replace with .glb when assets are ready
+  modelPath?: string     // public-folder path to the building's .glb asset
+  rotation?: number      // Y rotation in radians (default 0)
   label?: string
+}
+
+export interface StreetTileData {
+  id: string
+  modelPath: string
+  position: Vector3Tuple
+  rotation?: number      // Y rotation in radians
 }
 
 // ── Game State (top-level shape used by the store) ────────────────────────────
