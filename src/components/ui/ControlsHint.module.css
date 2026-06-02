@@ -1,0 +1,11 @@
+.hint {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  display: flex;
+  gap: 14px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+  user-select: none;
+}

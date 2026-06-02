@@ -1,0 +1,80 @@
+.overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  padding: 24px;
+  pointer-events: none;
+}
+
+.box {
+  pointer-events: all;
+  background: rgba(10, 8, 6, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  padding: 20px 24px;
+  max-width: 680px;
+  width: 100%;
+  backdrop-filter: blur(8px);
+}
+
+.speaker {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f5c542;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.text {
+  font-size: 15px;
+  color: #eee;
+  line-height: 1.55;
+  min-height: 44px;
+}
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.choiceBtn {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  color: #ddd;
+  font-size: 14px;
+  padding: 10px 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.choiceBtn:hover {
+  background: rgba(245, 197, 66, 0.18);
+  border-color: #f5c542;
+  color: #fff;
+}
+
+.nextBtn {
+  margin-top: 14px;
+  float: right;
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  color: #aaa;
+  font-size: 13px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.nextBtn:hover {
+  color: #fff;
+  border-color: #fff;
+}

@@ -1,0 +1,49 @@
+.hud {
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  border-radius: 10px;
+  padding: 12px 16px;
+  min-width: 180px;
+  pointer-events: none;
+  user-select: none;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #eee;
+}
+
+.label {
+  width: 72px;
+  flex-shrink: 0;
+  font-size: 11px;
+  opacity: 0.85;
+}
+
+.value {
+  font-weight: 600;
+  color: #6fcf97;
+}
+
+.barBg {
+  flex: 1;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
