@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { Sky, Environment } from '@react-three/drei'
+import { Sky, Environment, useGLTF } from '@react-three/drei'
 import { buildingData } from '@/data/world'
 import { npcData } from '@/data/npcs'
 import { Ground } from './Ground'
@@ -8,6 +8,9 @@ import { Building } from './Building'
 import { Player } from '@/components/player/Player'
 import { NPC } from '@/components/npcs/NPC'
 import { useNPCInteraction } from '@/hooks/useNPCInteraction'
+
+// Preload all NPC models as soon as the module is imported
+npcData.forEach((npc) => { if (npc.modelPath) useGLTF.preload(npc.modelPath) })
 
 // ── GameWorld ──────────────────────────────────────────────────────────────
 // Root 3D scene. Add new world regions, lighting rigs, or environment

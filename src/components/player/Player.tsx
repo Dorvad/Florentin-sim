@@ -1,26 +1,30 @@
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import type { PerspectiveCamera } from 'three'
+import { useGLTF } from '@react-three/drei'
 import { usePlayerMovement } from '@/hooks/usePlayerMovement'
 
-// ── Player ─────────────────────────────────────────────────────────────────
-// Placeholder: a capsule-shaped mesh (approximated with cylinder + 2 spheres).
-// TODO: Replace mesh internals with <primitive object={gltf.scene} /> once
-//       a player .glb model is ready. The Group ref and movement logic stay.
+// GLB scale: character is ~2.82 Three.js units tall, feet at local Y = -1.0
+// Scale to ~1.8m and lift so feet sit on y = 0.
+const MODEL_SCALE = 0.64
+const FEET_OFFSET = MODEL_SCALE // -1.0 * scale = -0.64, so lift +0.64
 
 const CAMERA_OFFSET = { x: 0, y: 8, z: 10 }
 const CAMERA_LERP = 0.1
 
+useGLTF.preload('/assets/models/player.glb')
+
 export function Player() {
   const meshRef = usePlayerMovement()
-  const cameraRef = useRef<PerspectiveCamera>(null)
+  const { scene } = useGLTF('/assets/models/player.glb')
+  const clonedScene = useMemo(() => scene.clone(true), [scene])
   const { camera } = useThree()
+  // cameraRef only used to satisfy linter; actual camera accessed via useThree
+  const _cameraRef = useRef(null)
+  void _cameraRef
 
   useFrame(() => {
     if (!meshRef.current) return
     const pos = meshRef.current.position
-
-    // Smooth camera follow
     camera.position.lerp(
       {
         x: pos.x + CAMERA_OFFSET.x,
@@ -32,26 +36,15 @@ export function Player() {
     camera.lookAt(pos.x, pos.y + 1, pos.z)
   })
 
-  // Suppress unused ref warning — cameraRef used implicitly via useThree
-  void cameraRef
-
   return (
     <group ref={meshRef} position={[0, 0, 0]}>
-      {/* Body */}
-      <mesh position={[0, 0.75, 0]} castShadow>
-        <cylinderGeometry args={[0.3, 0.3, 1.2, 12]} />
-        <meshStandardMaterial color="#f4c97f" />
-      </mesh>
-      {/* Head */}
-      <mesh position={[0, 1.6, 0]} castShadow>
-        <sphereGeometry args={[0.3, 12, 12]} />
-        <meshStandardMaterial color="#f4c97f" />
-      </mesh>
-      {/* Direction indicator — small dot at front */}
-      <mesh position={[0, 0.75, -0.32]}>
-        <sphereGeometry args={[0.08, 6, 6]} />
-        <meshStandardMaterial color="#333" />
-      </mesh>
+      {/* Replace <primitive> with placeholder boxes to revert to placeholder */}
+      <primitive
+        object={clonedScene}
+        scale={MODEL_SCALE}
+        position={[0, FEET_OFFSET, 0]}
+        castShadow
+      />
     </group>
   )
 }

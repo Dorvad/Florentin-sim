@@ -52,8 +52,8 @@ export interface NPCData {
   id: string
   name: string
   position: Vector3Tuple
-  color: string          // placeholder mesh colour; swap for modelPath later
-  // modelPath?: string  // TODO: path to .glb model once assets are ready
+  color: string          // fallback placeholder colour when no model is loaded
+  modelPath?: string     // public-folder path to the character's .glb asset
   dialogueTreeId: string
   // questIds this NPC can offer (looked up from questData)
   questIds?: string[]

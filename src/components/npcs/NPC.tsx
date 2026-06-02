@@ -1,6 +1,6 @@
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Text } from '@react-three/drei'
+import { Text, useGLTF } from '@react-three/drei'
 import type { Mesh } from 'three'
 import type { NPCData } from '@/types'
 import { useGameStore } from '@/stores/gameStore'
@@ -10,14 +10,32 @@ interface NPCProps {
 }
 
 const INTERACTION_RADIUS = 2.5
+const MODEL_SCALE = 0.64
+const FEET_OFFSET = MODEL_SCALE
 const INDICATOR_BOB_SPEED = 2
 const INDICATOR_BOB_AMOUNT = 0.15
 
+// ── NPCModel ───────────────────────────────────────────────────────────────
+// Separate component so useGLTF is always called unconditionally.
+// Each NPC model path is unique so we don't need to clone.
+
+function NPCModel({ modelPath }: { modelPath: string }) {
+  const { scene } = useGLTF(modelPath)
+  const clone = useMemo(() => scene.clone(true), [scene])
+  return (
+    <primitive
+      object={clone}
+      scale={MODEL_SCALE}
+      position={[0, FEET_OFFSET, 0]}
+      castShadow
+    />
+  )
+}
+
 // ── NPC ────────────────────────────────────────────────────────────────────
-// Placeholder: a coloured box with a floating name label.
-// When the player is within INTERACTION_RADIUS, an 'E' prompt floats above.
-// TODO: Replace mesh internals with <primitive object={gltf.scene} /> once
-//       .glb models exist. The interaction logic (distance check) stays here.
+// Renders a character at the given world position.
+// If data.modelPath is set, uses the GLB model; otherwise falls back to
+// placeholder geometry so the game still runs without assets.
 
 export function NPC({ data }: NPCProps) {
   const indicatorRef = useRef<Mesh>(null)
@@ -27,33 +45,35 @@ export function NPC({ data }: NPCProps) {
   const dx = playerPosition[0] - data.position[0]
   const dz = playerPosition[2] - data.position[2]
   const isNearby = Math.sqrt(dx * dx + dz * dz) <= INTERACTION_RADIUS
-  const isThisNPCTalking =
-    activeDialogue?.npcName === data.name
+  const isThisNPCTalking = activeDialogue?.npcName === data.name
 
   useFrame(({ clock }) => {
-    if (!indicatorRef.current) return
-    if (!isNearby || isThisNPCTalking) return
-    // Bob the 'E' prompt up and down
+    if (!indicatorRef.current || !isNearby || isThisNPCTalking) return
     indicatorRef.current.position.y =
-      3.2 + Math.sin(clock.elapsedTime * INDICATOR_BOB_SPEED) * INDICATOR_BOB_AMOUNT
+      2.6 + Math.sin(clock.elapsedTime * INDICATOR_BOB_SPEED) * INDICATOR_BOB_AMOUNT
   })
 
   return (
     <group position={data.position}>
-      {/* Body — swap this group's children for <primitive> when model is ready */}
-      <mesh position={[0, 0.75, 0]} castShadow>
-        <boxGeometry args={[0.6, 1.5, 0.4]} />
-        <meshStandardMaterial color={data.color} />
-      </mesh>
-      {/* Head */}
-      <mesh position={[0, 1.7, 0]} castShadow>
-        <sphereGeometry args={[0.28, 12, 12]} />
-        <meshStandardMaterial color={data.color} />
-      </mesh>
+      {/* ── Mesh: GLB model or placeholder ──────────────────────────────── */}
+      {data.modelPath ? (
+        <NPCModel modelPath={data.modelPath} />
+      ) : (
+        <>
+          <mesh position={[0, 0.75, 0]} castShadow>
+            <boxGeometry args={[0.6, 1.5, 0.4]} />
+            <meshStandardMaterial color={data.color} />
+          </mesh>
+          <mesh position={[0, 1.7, 0]} castShadow>
+            <sphereGeometry args={[0.28, 12, 12]} />
+            <meshStandardMaterial color={data.color} />
+          </mesh>
+        </>
+      )}
 
-      {/* Name label — always visible */}
+      {/* ── Name label ──────────────────────────────────────────────────── */}
       <Text
-        position={[0, 2.4, 0]}
+        position={[0, 2.2, 0]}
         fontSize={0.22}
         color="white"
         anchorX="center"
@@ -64,9 +84,9 @@ export function NPC({ data }: NPCProps) {
         {data.name}
       </Text>
 
-      {/* 'E to talk' indicator — visible when nearby and not in dialogue */}
+      {/* ── 'E to talk' indicator ───────────────────────────────────────── */}
       {isNearby && !isThisNPCTalking && (
-        <mesh ref={indicatorRef} position={[0, 3.2, 0]}>
+        <mesh ref={indicatorRef} position={[0, 2.6, 0]}>
           <sphereGeometry args={[0.12, 8, 8]} />
           <meshStandardMaterial color="#ffdd44" emissive="#ffdd44" emissiveIntensity={0.6} />
         </mesh>
