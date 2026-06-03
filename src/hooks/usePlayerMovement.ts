@@ -3,6 +3,7 @@ import { useFrame } from '@react-three/fiber'
 import type { Group } from 'three'
 import { useGameStore } from '@/stores/gameStore'
 import { useInputStore } from '@/stores/inputStore'
+import { resolveCollisions } from '@/systems/collisionSystem'
 
 const SPEED = 5
 const TURN_SPEED = 10
@@ -69,6 +70,11 @@ export function usePlayerMovement() {
     pos.x += dx * move
     pos.z += dz * move
     pos.y = 0
+
+    // Resolve collisions on the street only (apartment uses its own bounds)
+    if (useGameStore.getState().currentArea === 'street') {
+      ;[pos.x, pos.z] = resolveCollisions(pos.x, pos.z)
+    }
 
     if (Math.abs(dx) > 0.01 || Math.abs(dz) > 0.01) {
       const targetAngle = Math.atan2(dx, dz)

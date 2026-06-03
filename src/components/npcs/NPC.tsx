@@ -1,7 +1,8 @@
-import { useMemo, useRef, Suspense } from 'react'
+import { useEffect, useRef, Suspense } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Text, useGLTF } from '@react-three/drei'
+import { Text, useGLTF, useAnimations } from '@react-three/drei'
 import { Mesh, MeshStandardMaterial, SkinnedMesh } from 'three'
+import type { Group } from 'three'
 import type { NPCData } from '@/types'
 import { useGameStore } from '@/stores/gameStore'
 
@@ -11,12 +12,12 @@ interface NPCProps {
 
 const INTERACTION_RADIUS = 2.5
 const MODEL_SCALE = 0.64
-const FEET_OFFSET = 0  // NPC GLBs have feet at local Y=0
+const FEET_OFFSET = 0
 const INDICATOR_BOB_SPEED = 2
 const INDICATOR_BOB_AMOUNT = 0.15
+const ANIM_IDLE = 'CharacterArmature|CharacterArmature|Idle'
 
 // ── NPCPlaceholder ────────────────────────────────────────────────────────
-// Shown while the GLB is loading or when no model path is provided.
 
 function NPCPlaceholder({ color }: { color: string }) {
   return (
@@ -34,14 +35,17 @@ function NPCPlaceholder({ color }: { color: string }) {
 }
 
 // ── NPCModel ───────────────────────────────────────────────────────────────
-// Separate component so useGLTF is always called unconditionally.
-// Each NPC model path is unique so we don't need to clone.
+// Each NPC model file is unique so we use the scene directly (no clone needed).
+// useAnimations attaches an AnimationMixer to the group and resolves bone
+// targets by name within the scene subtree.
 
 function NPCModel({ modelPath }: { modelPath: string }) {
-  const { scene } = useGLTF(modelPath)
-  const clone = useMemo(() => {
-    const c = scene.clone(true)
-    c.traverse((node) => {
+  const groupRef = useRef<Group>(null)
+  const { scene, animations } = useGLTF(modelPath)
+  const { actions } = useAnimations(animations, groupRef)
+
+  useEffect(() => {
+    scene.traverse((node) => {
       if (!(node instanceof Mesh) && !(node instanceof SkinnedMesh)) return
       node.castShadow = true
       const mats = Array.isArray(node.material) ? node.material : [node.material]
@@ -53,22 +57,20 @@ function NPCModel({ modelPath }: { modelPath: string }) {
         }
       })
     })
-    return c
   }, [scene])
+
+  useEffect(() => {
+    actions[ANIM_IDLE]?.play()
+  }, [actions])
+
   return (
-    <primitive
-      object={clone}
-      scale={MODEL_SCALE}
-      position={[0, FEET_OFFSET, 0]}
-      castShadow
-    />
+    <group ref={groupRef}>
+      <primitive object={scene} scale={MODEL_SCALE} position={[0, FEET_OFFSET, 0]} castShadow />
+    </group>
   )
 }
 
 // ── NPC ────────────────────────────────────────────────────────────────────
-// Renders a character at the given world position.
-// If data.modelPath is set, uses the GLB model; otherwise falls back to
-// placeholder geometry so the game still runs without assets.
 
 export function NPC({ data }: NPCProps) {
   const indicatorRef = useRef<Mesh>(null)
@@ -88,7 +90,6 @@ export function NPC({ data }: NPCProps) {
 
   return (
     <group position={data.position}>
-      {/* ── Mesh: GLB model or placeholder ──────────────────────────────── */}
       {data.modelPath ? (
         <Suspense fallback={<NPCPlaceholder color={data.color} />}>
           <NPCModel modelPath={data.modelPath} />
@@ -97,7 +98,6 @@ export function NPC({ data }: NPCProps) {
         <NPCPlaceholder color={data.color} />
       )}
 
-      {/* ── Name label ──────────────────────────────────────────────────── */}
       <Text
         position={[0, 2.2, 0]}
         fontSize={0.22}
@@ -110,7 +110,6 @@ export function NPC({ data }: NPCProps) {
         {data.name}
       </Text>
 
-      {/* ── 'E to talk' indicator ───────────────────────────────────────── */}
       {isNearby && !isThisNPCTalking && (
         <mesh ref={indicatorRef} position={[0, 2.6, 0]}>
           <sphereGeometry args={[0.12, 8, 8]} />
