@@ -1,24 +1,29 @@
-import { useMemo } from 'react'
+import { useEffect, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { useGLTF } from '@react-three/drei'
+import { useGLTF, useAnimations } from '@react-three/drei'
 import { Mesh, MeshStandardMaterial, SkinnedMesh } from 'three'
 import { usePlayerMovement } from '@/hooks/usePlayerMovement'
 import { useGameStore } from '@/stores/gameStore'
 
-// All materials were exported with alpha=0 — fixed by traversal below.
 const MODEL_SCALE = 0.64
-
 const CAMERA_OFFSET = { x: 0, y: 8, z: 10 }
 const CAMERA_LERP = 0.1
+
+const ANIM_IDLE = 'CharacterArmature|CharacterArmature|Idle'
+const ANIM_WALK = 'CharacterArmature|CharacterArmature|Walk'
 
 useGLTF.preload('/assets/models/player.glb')
 
 export function Player() {
-  const meshRef = usePlayerMovement()
-  const { scene } = useGLTF('/assets/models/player.glb')
-  const clonedScene = useMemo(() => {
-    const clone = scene.clone(true)
-    clone.traverse((node) => {
+  const { meshRef, isMovingRef } = usePlayerMovement()
+  const { scene, animations } = useGLTF('/assets/models/player.glb')
+  const { actions } = useAnimations(animations, meshRef)
+  const currentAnimRef = useRef<string | null>(null)
+  const { camera } = useThree()
+
+  // Fix materials once (useGLTF caches — this runs once per model load)
+  useEffect(() => {
+    scene.traverse((node) => {
       if (!(node instanceof Mesh) && !(node instanceof SkinnedMesh)) return
       node.castShadow = true
       const mats = Array.isArray(node.material) ? node.material : [node.material]
@@ -30,28 +35,38 @@ export function Player() {
         }
       })
     })
-    return clone
   }, [scene])
-  const { camera } = useThree()
+
+  // Start idle animation after actions are ready
+  useEffect(() => {
+    if (!actions[ANIM_IDLE]) return
+    actions[ANIM_IDLE]!.play()
+    currentAnimRef.current = ANIM_IDLE
+  }, [actions])
 
   useFrame(() => {
-    // Read directly from store (getState = no subscription, no re-render).
-    // This avoids the stale-closure / position-reset problem that arises when
-    // reading meshRef.current.position: Player re-renders whenever activeDialogue
-    // changes, and R3F would re-apply position={[0,0,0]} to the group, snapping
-    // the player back to the origin on every dialogue open/close.
+    // Camera follow — read store without subscribing to avoid stale-closure resets
     const [px, py, pz] = useGameStore.getState().playerPosition
     camera.position.lerp(
       { x: px + CAMERA_OFFSET.x, y: py + CAMERA_OFFSET.y, z: pz + CAMERA_OFFSET.z } as never,
       CAMERA_LERP
     )
     camera.lookAt(px, py + 1, pz)
+
+    // Animation switching: idle ↔ walk
+    const target = isMovingRef.current ? ANIM_WALK : ANIM_IDLE
+    if (target !== currentAnimRef.current && actions[target]) {
+      const outgoing = currentAnimRef.current ? actions[currentAnimRef.current] : null
+      actions[target]!.reset().fadeIn(0.2).play()
+      outgoing?.fadeOut(0.2)
+      currentAnimRef.current = target
+    }
   })
 
-  // No position prop → R3F never resets the group; movement hook owns the position.
+  // No position prop — movement hook owns the transform
   return (
     <group ref={meshRef}>
-      <primitive object={clonedScene} scale={MODEL_SCALE} castShadow />
+      <primitive object={scene} scale={MODEL_SCALE} castShadow />
     </group>
   )
 }
