@@ -5,6 +5,17 @@ import { openDialogue } from '@/systems/dialogueSystem'
 
 export const INTERACTION_RADIUS = 2.5
 
+// Live NPC positions updated each frame by wandering NPCs
+const npcPositionRegistry = new Map<string, Vector3Tuple>()
+
+export function updateNPCPosition(id: string, pos: Vector3Tuple): void {
+  npcPositionRegistry.set(id, pos)
+}
+
+export function getNPCWorldPosition(id: string, fallback: Vector3Tuple): Vector3Tuple {
+  return npcPositionRegistry.get(id) ?? fallback
+}
+
 // Shared interface — both NPCData and InteractableObjectData satisfy this.
 export interface Interactable {
   id: string
@@ -43,20 +54,30 @@ export function interactWithNearest(
   if (nearest) openDialogue(nearest.dialogueTreeId, nearest.name)
 }
 
-// ── Legacy NPC-specific wrappers ──────────────────────────────────────────
+// ── NPC-specific wrappers (use registry positions for wandering NPCs) ──────
 
 export function getNearestNPCInRange(
   playerPosition: Vector3Tuple,
   npcs: NPCData[]
 ): NPCData | null {
-  return getNearestInRange(playerPosition, npcs) as NPCData | null
+  const candidates = npcs
+    .map((npc) => {
+      const pos = npcPositionRegistry.get(npc.id) ?? npc.position
+      return { npc, dist: distanceTo(playerPosition, pos) }
+    })
+    .filter(({ dist }) => dist <= INTERACTION_RADIUS)
+    .sort((a, b) => a.dist - b.dist)
+  return candidates[0]?.npc ?? null
 }
 
 export function interactWithNearestNPC(
   playerPosition: Vector3Tuple,
   npcs: NPCData[]
 ): void {
-  interactWithNearest(playerPosition, npcs)
+  const { activeDialogue } = useGameStore.getState()
+  if (activeDialogue) return
+  const nearest = getNearestNPCInRange(playerPosition, npcs)
+  if (nearest) openDialogue(nearest.dialogueTreeId, nearest.name)
 }
 
 // ── Object-specific wrappers ──────────────────────────────────────────────
