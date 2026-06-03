@@ -1,7 +1,7 @@
 import { useMemo, useRef, Suspense } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Text, useGLTF } from '@react-three/drei'
-import type { Mesh } from 'three'
+import { Mesh, MeshStandardMaterial, SkinnedMesh } from 'three'
 import type { NPCData } from '@/types'
 import { useGameStore } from '@/stores/gameStore'
 
@@ -11,7 +11,7 @@ interface NPCProps {
 
 const INTERACTION_RADIUS = 2.5
 const MODEL_SCALE = 0.64
-const FEET_OFFSET = MODEL_SCALE
+const FEET_OFFSET = 0  // NPC GLBs have feet at local Y=0
 const INDICATOR_BOB_SPEED = 2
 const INDICATOR_BOB_AMOUNT = 0.15
 
@@ -39,7 +39,22 @@ function NPCPlaceholder({ color }: { color: string }) {
 
 function NPCModel({ modelPath }: { modelPath: string }) {
   const { scene } = useGLTF(modelPath)
-  const clone = useMemo(() => scene.clone(true), [scene])
+  const clone = useMemo(() => {
+    const c = scene.clone(true)
+    c.traverse((node) => {
+      if (!(node instanceof Mesh) && !(node instanceof SkinnedMesh)) return
+      node.castShadow = true
+      const mats = Array.isArray(node.material) ? node.material : [node.material]
+      mats.forEach((mat) => {
+        if (mat instanceof MeshStandardMaterial) {
+          mat.opacity = 1
+          mat.transparent = false
+          mat.needsUpdate = true
+        }
+      })
+    })
+    return c
+  }, [scene])
   return (
     <primitive
       object={clone}

@@ -1,12 +1,13 @@
 import { useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
+import { Mesh, MeshStandardMaterial, SkinnedMesh } from 'three'
 import { usePlayerMovement } from '@/hooks/usePlayerMovement'
 
-// GLB scale: character is ~2.82 Three.js units tall, feet at local Y = -1.0
-// Scale to ~1.8m and lift so feet sit on y = 0.
+// Character GLBs have feet at local Y=0; no vertical offset needed.
+// All materials were exported with alpha=0 — fixed by traversal below.
 const MODEL_SCALE = 0.64
-const FEET_OFFSET = MODEL_SCALE // -1.0 * scale = -0.64, so lift +0.64
+const FEET_OFFSET = 0
 
 const CAMERA_OFFSET = { x: 0, y: 8, z: 10 }
 const CAMERA_LERP = 0.1
@@ -16,7 +17,22 @@ useGLTF.preload('/assets/models/player.glb')
 export function Player() {
   const meshRef = usePlayerMovement()
   const { scene } = useGLTF('/assets/models/player.glb')
-  const clonedScene = useMemo(() => scene.clone(true), [scene])
+  const clonedScene = useMemo(() => {
+    const clone = scene.clone(true)
+    clone.traverse((node) => {
+      if (!(node instanceof Mesh) && !(node instanceof SkinnedMesh)) return
+      node.castShadow = true
+      const mats = Array.isArray(node.material) ? node.material : [node.material]
+      mats.forEach((mat) => {
+        if (mat instanceof MeshStandardMaterial) {
+          mat.opacity = 1
+          mat.transparent = false
+          mat.needsUpdate = true
+        }
+      })
+    })
+    return clone
+  }, [scene])
   const { camera } = useThree()
   // cameraRef only used to satisfy linter; actual camera accessed via useThree
   const _cameraRef = useRef(null)

@@ -126,11 +126,9 @@ function CozyProps() {
       {/* ── Square rug — under mattress (replaces the plain geometry rug) ── */}
       <ApartmentProp path={COZY.squareRug} pos={[0, 0.015, 2]} />
 
-      {/* ── Wall lamp — west wall, above table/kitchen area ─────────────── */}
-      <ApartmentProp path={COZY.wallLamp} pos={[-3.95, 1.72, 0.5]} rot={-Math.PI / 2} />
-
-      {/* ── Wall lamp — north wall, east of window ───────────────────────── */}
-      <ApartmentProp path={COZY.wallLamp} pos={[2.0, 1.72, -3.95]} rot={Math.PI} />
+      {/* ── Wall lamps — both on north wall (west wall was cut away) ────── */}
+      <ApartmentProp path={COZY.wallLamp} pos={[-2.0, 1.72, -3.95]} rot={Math.PI} />
+      <ApartmentProp path={COZY.wallLamp} pos={[ 2.0, 1.72, -3.95]} rot={Math.PI} />
 
       {/* ── Decorative wall mirror — north wall, east side ───────────────── */}
       {/* ymin=-0.465 so y=1.1 centers the mirror at chest-to-eye height */}
@@ -240,29 +238,25 @@ export function ApartmentScene() {
         <meshStandardMaterial color={ceilCol} roughness={1} side={2} />
       </mesh>
 
-      {/* ── North wall ─────────────────────────────────────────────────── */}
+      {/* ── North wall — the single back wall (Sims-style: furthest from camera) */}
       <mesh position={[0, 1.5, -4]} receiveShadow>
         <boxGeometry args={[8, 3, 0.12]} />
         <meshStandardMaterial color={wallCol} roughness={0.9} />
       </mesh>
 
-      {/* ── East wall ──────────────────────────────────────────────────── */}
+      {/* ── East wall — right-side back wall visible from south-facing camera */}
       <mesh position={[4, 1.5, 0]} receiveShadow>
         <boxGeometry args={[0.12, 3, 8]} />
         <meshStandardMaterial color={wallCol} roughness={0.9} />
       </mesh>
 
-      {/* ── West wall ──────────────────────────────────────────────────── */}
-      <mesh position={[-4, 1.5, 0]} receiveShadow>
-        <boxGeometry args={[0.12, 3, 8]} />
-        <meshStandardMaterial color={wallCol} roughness={0.9} />
-      </mesh>
+      {/* West wall omitted — cut away for camera visibility (Sims convention) */}
+      {/* Ceiling omitted — the missing ceiling gives the diorama/Sims top-down view */}
 
-      {/* ── Skirting boards ────────────────────────────────────────────── */}
+      {/* ── Skirting boards (north and east only) ──────────────────────── */}
       {([
-        { pos: [0, 0.06, -3.94] as Vector3Tuple, args: [8, 0.12, 0.04] as Vector3Tuple },
-        { pos: [3.94, 0.06, 0]  as Vector3Tuple, args: [0.04, 0.12, 8] as Vector3Tuple },
-        { pos: [-3.94, 0.06, 0] as Vector3Tuple, args: [0.04, 0.12, 8] as Vector3Tuple },
+        { pos: [0, 0.06, -3.94]  as Vector3Tuple, args: [8,    0.12, 0.04] as Vector3Tuple },
+        { pos: [3.94, 0.06, 0]   as Vector3Tuple, args: [0.04, 0.12, 8   ] as Vector3Tuple },
       ] as const).map(({ pos, args }, i) => (
         <mesh key={i} position={pos} receiveShadow>
           <boxGeometry args={args} />
