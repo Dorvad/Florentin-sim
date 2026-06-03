@@ -99,6 +99,31 @@ export const streetProps: StreetPropData[] = [
   // ── Kenney Modular Buildings — west side ──────────────────────────────────
   { id: 'kb_w_tower_d', modelPath: '/assets/models/buildings/building-sample-tower-d.glb', position: [-13, 0, -2],  scale: 9  },
   { id: 'kb_w_tower_b', modelPath: '/assets/models/buildings/building-sample-tower-b.glb', position: [-16, 0, -27], scale: 10 },
+
+  // ── South terminus — closes the street visually ───────────────────────────
+  { id: 'kb_e_house_a', modelPath: '/assets/models/buildings/building-sample-house-a.glb', position: [16, 0, -50], rotation: Math.PI, scale: 10 },
+
+  // ── Background skyline — east (deeper x, peeks above street-side row) ──────
+  { id: 'kb_bg_e1', modelPath: '/assets/models/buildings/building-sample-tower-b.glb', position: [27, 0,  -8], scale: 14 },
+  { id: 'kb_bg_e2', modelPath: '/assets/models/buildings/building-sample-house-c.glb', position: [27, 0, -34], rotation: Math.PI, scale: 10 },
+
+  // ── Background skyline — west ─────────────────────────────────────────────
+  { id: 'kb_bg_w1', modelPath: '/assets/models/buildings/building-sample-tower-c.glb', position: [-28, 0,  -8], rotation: Math.PI, scale: 14 },
+  { id: 'kb_bg_w2', modelPath: '/assets/models/buildings/building-sample-house-a.glb', position: [-28, 0, -52], scale: 10 },
+
+  // ── Cross-street backdrop — visible down the 4-way intersection ───────────
+  { id: 'kb_xst_e', modelPath: '/assets/models/buildings/building-sample-tower-d.glb', position: [32, 0, -12], scale: 10 },
+  { id: 'kb_xst_w', modelPath: '/assets/models/buildings/building-sample-house-c.glb', position: [-32, 0, -13], rotation: Math.PI, scale: 9 },
+
+  // ── Rooftop AC units (heights = native_y × scale) ─────────────────────────
+  // kb_e_tower_c (scale=10, native h=3.138 → roof y=31.4)
+  { id: 'ac_e_tc_1', modelPath: '/assets/models/retro/detail-ac-a.glb', position: [14.8, 31.4, -4.2], scale: 8 },
+  { id: 'ac_e_tc_2', modelPath: '/assets/models/retro/detail-ac-b.glb', position: [17.0, 31.4, -5.8], scale: 8 },
+  // kb_w_tower_d (scale=9, native h=3.763 → roof y=33.9)
+  { id: 'ac_w_td_1', modelPath: '/assets/models/retro/detail-ac-a.glb', position: [-11.8, 33.9, -1.5], scale: 8 },
+  { id: 'ac_w_td_2', modelPath: '/assets/models/retro/detail-ac-b.glb', position: [-14.2, 33.9, -2.8], scale: 8 },
+  // kb_w_tower_b (scale=10, native h=1.888 → roof y=18.9)
+  { id: 'ac_w_tb_1', modelPath: '/assets/models/retro/detail-ac-a.glb', position: [-15.5, 18.9, -26.5], scale: 7 },
 ]
 
 // ── Buildings ──────────────────────────────────────────────────────────────

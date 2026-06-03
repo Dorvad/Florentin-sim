@@ -30,6 +30,9 @@ const BOXES: Box[] = [
   { cx: -4.5, cz: -13, hw: 0.70, hd: 1.00 }, // car_w_hatch
   { cx: -4.5, cz: -22, hw: 0.75, hd: 1.10 }, // car_w_sport
   { cx: -4.5, cz: -36, hw: 0.80, hd: 1.25 }, // car_w_suv
+
+  // ── New south terminus building ─────────────────────────────────────────
+  { cx: 16, cz: -50, hw: 4.5, hd: 4.5 },   // kb_e_house_a
 ]
 
 const CIRCLES: Circle[] = [

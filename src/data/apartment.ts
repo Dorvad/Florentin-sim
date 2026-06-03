@@ -36,5 +36,6 @@ export const apartmentObjects: InteractableObjectData[] = [
     color: '#7B5E3A',
     size: [1, 2, 0.1],
     dialogueTreeId: 'apartment_door',
+    modelPath: '/assets/models/buildings/door-brown.glb',
   },
 ]

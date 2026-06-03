@@ -1,7 +1,7 @@
 import { useEffect, useRef, useMemo, Suspense } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Text, useGLTF } from '@react-three/drei'
-import { Mesh } from 'three'
+import { Mesh, MeshStandardMaterial } from 'three'
 import type { Vector3Tuple } from 'three'
 import { useGameStore } from '@/stores/gameStore'
 import { apartmentObjects } from '@/data/apartment'
@@ -15,6 +15,8 @@ let openingPlayed = false
 
 // Preload cozy interior models at module load so they're ready when the
 // apartment scene first renders.
+useGLTF.preload('/assets/models/buildings/door-brown.glb')
+
 const COZY = {
   nightstand:  '/assets/models/cozy/nightstand.glb',
   coffeeTable: '/assets/models/cozy/coffeetable.glb',
@@ -50,6 +52,29 @@ function ApartmentProp({ path, pos, rot = 0 }: {
   return <primitive object={clone} position={pos} rotation-y={rot} />
 }
 
+// ── InteractableModel ──────────────────────────────────────────────────────
+// Renders the GLB model for an interactable object that has a modelPath.
+// The group parent is centered at data.position, so we shift down by half the
+// object height so the model's y=0 origin lands on the floor.
+
+function InteractableModel({ modelPath, halfH }: { modelPath: string; halfH: number }) {
+  const { scene } = useGLTF(modelPath)
+  const clone = useMemo(() => {
+    const c = scene.clone(true)
+    c.traverse((node) => {
+      if (!(node instanceof Mesh)) return
+      node.castShadow = true
+      node.receiveShadow = true
+      const mats = Array.isArray(node.material) ? node.material : [node.material]
+      mats.forEach((m) => {
+        if (m instanceof MeshStandardMaterial) { m.needsUpdate = true }
+      })
+    })
+    return c
+  }, [scene])
+  return <primitive object={clone} position={[0, -halfH, 0]} scale={4} />
+}
+
 // ── ApartmentObject ────────────────────────────────────────────────────────
 
 function ApartmentObjectMesh({ data }: { data: InteractableObjectData }) {
@@ -67,10 +92,16 @@ function ApartmentObjectMesh({ data }: { data: InteractableObjectData }) {
 
   return (
     <group position={data.position}>
-      <mesh castShadow receiveShadow>
-        <boxGeometry args={[w, h, d]} />
-        <meshStandardMaterial color={data.color} roughness={0.75} metalness={0.1} />
-      </mesh>
+      {data.modelPath ? (
+        <Suspense fallback={null}>
+          <InteractableModel modelPath={data.modelPath} halfH={h / 2} />
+        </Suspense>
+      ) : (
+        <mesh castShadow receiveShadow>
+          <boxGeometry args={[w, h, d]} />
+          <meshStandardMaterial color={data.color} roughness={0.75} metalness={0.1} />
+        </mesh>
+      )}
 
       <Suspense fallback={null}>
         <Text
@@ -205,13 +236,7 @@ function RoomProps() {
 // Three remaining walls + floor + ceiling frame the diorama view.
 
 export function ApartmentScene() {
-  const apartmentInteracted = useGameStore((s) => s.apartmentInteracted)
-
-  const visibleObjects = apartmentObjects.filter(
-    (o) => o.id !== 'apartment_door' || apartmentInteracted
-  )
-
-  useObjectInteraction(visibleObjects)
+  useObjectInteraction(apartmentObjects)
 
   useEffect(() => {
     if (openingPlayed) return
@@ -268,7 +293,7 @@ export function ApartmentScene() {
       </Suspense>
 
       {/* ── Interactable objects (boxes with interaction system) ────────── */}
-      {visibleObjects.map((obj) => (
+      {apartmentObjects.map((obj) => (
         <ApartmentObjectMesh key={obj.id} data={obj} />
       ))}
     </>

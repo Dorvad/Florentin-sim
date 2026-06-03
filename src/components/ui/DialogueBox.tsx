@@ -21,8 +21,11 @@ export function DialogueBox() {
   const node = getCurrentNode()
   if (!node) return null
 
-  const currentLine = node.lines[lineIndex]
-  const isLastLine = lineIndex >= node.lines.length - 1
+  // Clamp in case lineIndex is stale from a longer previous node (one-frame lag
+  // between nodeId changing and the useEffect resetting lineIndex to 0).
+  const safeIndex = Math.min(lineIndex, node.lines.length - 1)
+  const currentLine = node.lines[safeIndex]
+  const isLastLine = safeIndex >= node.lines.length - 1
   const hasChoices = isLastLine && node.choices && node.choices.length > 0
 
   function handleAdvance() {

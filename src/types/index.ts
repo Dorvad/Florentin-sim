@@ -69,6 +69,7 @@ export interface InteractableObjectData {
   color: string
   size: Vector3Tuple
   dialogueTreeId: string
+  modelPath?: string   // optional GLB to render instead of the default colored box
 }
 
 // ── Quests ────────────────────────────────────────────────────────────────────

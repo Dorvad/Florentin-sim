@@ -95,7 +95,6 @@ function ActionButtons() {
   const playerPosition     = useGameStore((s) => s.playerPosition)
   const activeDialogue     = useGameStore((s) => s.activeDialogue)
   const currentArea        = useGameStore((s) => s.currentArea)
-  const apartmentInteracted = useGameStore((s) => s.apartmentInteracted)
   const toggleQuestLog     = useGameStore((s) => s.toggleQuestLog)
 
   let canInteract: boolean
@@ -103,11 +102,8 @@ function ActionButtons() {
   let interactLabel: string
 
   if (currentArea === 'apartment') {
-    const visible = apartmentObjects.filter(
-      (o) => o.id !== 'apartment_door' || apartmentInteracted
-    )
-    canInteract = getNearestObjectInRange(playerPosition, visible) !== null && activeDialogue === null
-    handleInteract = () => interactWithNearestObject(playerPosition, visible)
+    canInteract = getNearestObjectInRange(playerPosition, apartmentObjects) !== null && activeDialogue === null
+    handleInteract = () => interactWithNearestObject(playerPosition, apartmentObjects)
     interactLabel = 'Inspect'
   } else {
     canInteract = getNearestNPCInRange(playerPosition, npcData) !== null && activeDialogue === null
