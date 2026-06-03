@@ -1,11 +1,12 @@
 import { Suspense } from 'react'
 import { Sky, useGLTF } from '@react-three/drei'
-import { buildingData, streetTiles } from '@/data/world'
+import { buildingData, streetProps, streetTiles } from '@/data/world'
 import { npcData } from '@/data/npcs'
 import { useGameStore } from '@/stores/gameStore'
 import { Ground } from './Ground'
 import { Building } from './Building'
 import { StreetTile } from './StreetTile'
+import { StreetProp } from './StreetProp'
 import { ApartmentScene } from './ApartmentScene'
 import { Player } from '@/components/player/Player'
 import { NPC } from '@/components/npcs/NPC'
@@ -21,6 +22,10 @@ buildingData.forEach((b) => { if (b.modelPath) useGLTF.preload(b.modelPath) })
 // Preload all street tile GLB models (deduplicate by path)
 const uniqueStreetPaths = [...new Set(streetTiles.map((t) => t.modelPath))]
 uniqueStreetPaths.forEach((p) => useGLTF.preload(p))
+
+// Preload all street prop GLB models (cars + furniture, deduplicate by path)
+const uniquePropPaths = [...new Set(streetProps.map((p) => p.modelPath))]
+uniquePropPaths.forEach((p) => useGLTF.preload(p))
 
 // ── GameWorld ──────────────────────────────────────────────────────────────
 
@@ -75,6 +80,13 @@ export function GameWorld() {
           <Suspense fallback={null}>
             {buildingData.map((b) => (
               <Building key={b.id} data={b} />
+            ))}
+          </Suspense>
+
+          {/* Street props: parked cars, benches, lamps, trees, dumpsters */}
+          <Suspense fallback={null}>
+            {streetProps.map((prop) => (
+              <StreetProp key={prop.id} data={prop} />
             ))}
           </Suspense>
 

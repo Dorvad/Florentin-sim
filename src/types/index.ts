@@ -115,6 +115,14 @@ export interface StreetTileData {
   rotation?: number
 }
 
+export interface StreetPropData {
+  id: string
+  modelPath: string
+  position: Vector3Tuple
+  rotation?: number
+  scale?: number
+}
+
 // ── Game State ────────────────────────────────────────────────────────────────
 
 export interface ActiveDialogue {

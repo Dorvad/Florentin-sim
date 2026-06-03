@@ -1,4 +1,4 @@
-import type { BuildingData, StreetTileData } from '@/types'
+import type { BuildingData, StreetPropData, StreetTileData } from '@/types'
 
 // ── World layout ───────────────────────────────────────────────────────────
 // All coordinates are in world units (metres). Ground plane is at y=0.
@@ -44,6 +44,51 @@ export const streetTiles: StreetTileData[] = [
   { id: 'planter_e_1', modelPath: '/assets/models/sidewalk_planter.glb', position: [ 8, 0, -22] },
   { id: 'planter_w_0', modelPath: '/assets/models/sidewalk_planter.glb', position: [-8, 0, -14] },
   { id: 'planter_w_1', modelPath: '/assets/models/sidewalk_planter.glb', position: [-8, 0, -32] },
+]
+
+// ── Street props (parked cars + furniture) ─────────────────────────────────
+// Cars: Kenney Car Kit, scale 1 (geometry already in metres).
+//   sedan ≈ 1.5 × 1.15 × 2.55 m   — placed at y=0, cars sit flush on ground.
+// Retro-urban props: Kenney Retro Urban Kit, scale multipliers applied to
+//   compensate for the smaller geometry (bench ≈0.4 m tall before scaling).
+// East sidewalk: x≈+4.5 curb / x≈+7 sidewalk
+// West sidewalk: x≈-4.5 curb / x≈-7 sidewalk
+// NPC-clear zones: Avi [4,-6], Dana [-5,-3], Noa [-3,-10]
+
+export const streetProps: StreetPropData[] = [
+  // ── Parked cars – east curb ──────────────────────────────────────────────
+  { id: 'car_e_sedan',   modelPath: '/assets/models/car_sedan.glb',       position: [4.5, 0, -1],  rotation: 0 },
+  { id: 'car_e_taxi',    modelPath: '/assets/models/car_taxi.glb',         position: [4.5, 0, -16], rotation: Math.PI },
+  { id: 'car_e_van',     modelPath: '/assets/models/car_van.glb',          position: [4.5, 0, -30], rotation: 0 },
+
+  // ── Parked cars – west curb ──────────────────────────────────────────────
+  { id: 'car_w_hatch',   modelPath: '/assets/models/car_hatchback.glb',    position: [-4.5, 0, -13], rotation: Math.PI },
+  { id: 'car_w_sport',   modelPath: '/assets/models/car_sedan_sports.glb', position: [-4.5, 0, -22], rotation: 0 },
+  { id: 'car_w_suv',     modelPath: '/assets/models/car_suv.glb',          position: [-4.5, 0, -36], rotation: Math.PI },
+
+  // ── Street lamps ─────────────────────────────────────────────────────────
+  { id: 'lamp_e_0', modelPath: '/assets/models/retro/detail-light-single.glb', position: [6.8, 0,  -8], scale: 5 },
+  { id: 'lamp_e_1', modelPath: '/assets/models/retro/detail-light-single.glb', position: [6.8, 0, -24], scale: 5 },
+  { id: 'lamp_w_0', modelPath: '/assets/models/retro/detail-light-single.glb', position: [-6.8, 0,  -8], rotation: Math.PI, scale: 5 },
+  { id: 'lamp_w_1', modelPath: '/assets/models/retro/detail-light-single.glb', position: [-6.8, 0, -24], rotation: Math.PI, scale: 5 },
+
+  // ── Traffic lights at intersection (z=-12) ────────────────────────────────
+  { id: 'tlight_e', modelPath: '/assets/models/retro/detail-light-traffic.glb', position: [3.5, 0, -11.5], scale: 4 },
+  { id: 'tlight_w', modelPath: '/assets/models/retro/detail-light-traffic.glb', position: [-3.5, 0, -11.5], rotation: Math.PI, scale: 4 },
+
+  // ── Benches ───────────────────────────────────────────────────────────────
+  { id: 'bench_e_0', modelPath: '/assets/models/retro/detail-bench.glb', position: [7.0, 0,  -5],  rotation: -Math.PI / 2, scale: 1.5 },
+  { id: 'bench_w_0', modelPath: '/assets/models/retro/detail-bench.glb', position: [-7.0, 0, -18], rotation:  Math.PI / 2, scale: 1.5 },
+
+  // ── Trees ─────────────────────────────────────────────────────────────────
+  { id: 'tree_e_0', modelPath: '/assets/models/retro/tree-large.glb', position: [7.8, 0, -11], scale: 3 },
+  { id: 'tree_e_1', modelPath: '/assets/models/retro/tree-large.glb', position: [7.8, 0, -28], scale: 3 },
+  { id: 'tree_w_0', modelPath: '/assets/models/retro/tree-large.glb', position: [-7.8, 0,  -5], scale: 3 },
+  { id: 'tree_w_1', modelPath: '/assets/models/retro/tree-small.glb', position: [-7.8, 0, -28], scale: 4 },
+
+  // ── Dumpsters (corner / alley vibes) ─────────────────────────────────────
+  { id: 'dump_e_0', modelPath: '/assets/models/retro/detail-dumpster-closed.glb', position: [7.5, 0, -21], scale: 1.8 },
+  { id: 'dump_w_0', modelPath: '/assets/models/retro/detail-dumpster-closed.glb', position: [-7.5, 0, -33], rotation: Math.PI, scale: 1.8 },
 ]
 
 // ── Buildings ──────────────────────────────────────────────────────────────
