@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react'
+import { useMemo, useRef, Suspense } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Text, useGLTF } from '@react-three/drei'
 import type { Mesh } from 'three'
@@ -14,6 +14,24 @@ const MODEL_SCALE = 0.64
 const FEET_OFFSET = MODEL_SCALE
 const INDICATOR_BOB_SPEED = 2
 const INDICATOR_BOB_AMOUNT = 0.15
+
+// ── NPCPlaceholder ────────────────────────────────────────────────────────
+// Shown while the GLB is loading or when no model path is provided.
+
+function NPCPlaceholder({ color }: { color: string }) {
+  return (
+    <>
+      <mesh position={[0, 0.75, 0]} castShadow>
+        <capsuleGeometry args={[0.25, 1.0, 4, 8]} />
+        <meshStandardMaterial color={color} roughness={0.7} />
+      </mesh>
+      <mesh position={[0, 1.7, 0]} castShadow>
+        <sphereGeometry args={[0.25, 12, 12]} />
+        <meshStandardMaterial color={color} roughness={0.6} />
+      </mesh>
+    </>
+  )
+}
 
 // ── NPCModel ───────────────────────────────────────────────────────────────
 // Separate component so useGLTF is always called unconditionally.
@@ -57,18 +75,11 @@ export function NPC({ data }: NPCProps) {
     <group position={data.position}>
       {/* ── Mesh: GLB model or placeholder ──────────────────────────────── */}
       {data.modelPath ? (
-        <NPCModel modelPath={data.modelPath} />
+        <Suspense fallback={<NPCPlaceholder color={data.color} />}>
+          <NPCModel modelPath={data.modelPath} />
+        </Suspense>
       ) : (
-        <>
-          <mesh position={[0, 0.75, 0]} castShadow>
-            <boxGeometry args={[0.6, 1.5, 0.4]} />
-            <meshStandardMaterial color={data.color} />
-          </mesh>
-          <mesh position={[0, 1.7, 0]} castShadow>
-            <sphereGeometry args={[0.28, 12, 12]} />
-            <meshStandardMaterial color={data.color} />
-          </mesh>
-        </>
+        <NPCPlaceholder color={data.color} />
       )}
 
       {/* ── Name label ──────────────────────────────────────────────────── */}

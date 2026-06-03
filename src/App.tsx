@@ -37,6 +37,7 @@ export default function App() {
       <Canvas
         shadows
         camera={{ position: [0, 8, 10], fov: 55, near: 0.1, far: 200 }}
+        onCreated={({ camera }) => camera.lookAt(0, 0, 0)}
         style={{ position: 'fixed', inset: 0 }}
         data-noscroll=""
       >
