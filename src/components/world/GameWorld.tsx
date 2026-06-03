@@ -13,7 +13,7 @@ import { NPC } from '@/components/npcs/NPC'
 import { useNPCInteraction } from '@/hooks/useNPCInteraction'
 import { PlayerFallback } from '@/components/player/PlayerFallback'
 
-// Preload all NPC models as soon as the module is imported
+// Preload all NPC models (including animation packs) as soon as the module is imported
 npcData.forEach((npc) => { if (npc.modelPath) useGLTF.preload(npc.modelPath) })
 
 // Preload all building GLB models

@@ -56,6 +56,7 @@ export interface NPCData {
   position: Vector3Tuple
   color: string
   modelPath?: string
+  modelScale?: number
   dialogueTreeId: string
   questIds?: string[]
 }

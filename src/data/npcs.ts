@@ -12,6 +12,8 @@ export const npcData: NPCData[] = [
     color: '#8B7355',
     dialogueTreeId: 'moti_intro',
     questIds: ['move_mystery_bicycle', 'clear_your_name'],
+    modelPath: '/assets/models/animations/UAL1_Standard.glb',
+    modelScale: 1.0,
   },
   {
     id: 'avi',

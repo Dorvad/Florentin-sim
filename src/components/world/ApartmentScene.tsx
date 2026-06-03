@@ -139,31 +139,30 @@ function ApartmentObjectMesh({ data }: { data: InteractableObjectData }) {
 function CozyProps() {
   return (
     <>
-      {/* ── Nightstand — east side of mattress head (z≈1.55, x=1.25) ───── */}
-      <ApartmentProp path={COZY.nightstand} pos={[1.25, 0, 1.55]} />
+      {/* ── Nightstand — east side of mattress head ──────────────────────── */}
+      <ApartmentProp path={COZY.nightstand} pos={[1.25, 0, 1.45]} />
 
-      {/* ── Kitchen/work table — west side, clear of fridge ─────────────── */}
-      <ApartmentProp path={COZY.table} pos={[-2.0, 0, 0.8]} />
+      {/* ── Kitchen/work table — northwest, clear of fridge ─────────────── */}
+      <ApartmentProp path={COZY.table} pos={[-2.0, 0, -0.4]} />
 
       {/* ── Chair pulled up to table from south, facing north ───────────── */}
-      <ApartmentProp path={COZY.chair} pos={[-2.0, 0, 1.7]} rot={Math.PI} />
+      <ApartmentProp path={COZY.chair} pos={[-2.0, 0, 0.7]} rot={Math.PI} />
 
-      {/* ── Coffee table — open center-west space ───────────────────────── */}
-      <ApartmentProp path={COZY.coffeeTable} pos={[-0.5, 0, 0.05]} />
+      {/* ── Coffee table — center of room, between kitchen and bed ─────── */}
+      <ApartmentProp path={COZY.coffeeTable} pos={[0, 0, 0.5]} />
 
-      {/* ── Floor lamp — east side, between mirror wall and center ────────── */}
-      <ApartmentProp path={COZY.floorLamp} pos={[1.9, 0, -0.6]} />
+      {/* ── Floor lamp — northeast corner near sleeping area ─────────────── */}
+      <ApartmentProp path={COZY.floorLamp} pos={[2.2, 0, 0.5]} />
 
-      {/* ── Square rug — under mattress (replaces the plain geometry rug) ── */}
+      {/* ── Square rug — under mattress ─────────────────────────────────── */}
       <ApartmentProp path={COZY.squareRug} pos={[0, 0.015, 2]} />
 
-      {/* ── Wall lamps — both on north wall (west wall was cut away) ────── */}
-      <ApartmentProp path={COZY.wallLamp} pos={[-2.0, 1.72, -3.95]} rot={Math.PI} />
-      <ApartmentProp path={COZY.wallLamp} pos={[ 2.0, 1.72, -3.95]} rot={Math.PI} />
+      {/* ── Wall lamps — north wall, flanking the window ────────────────── */}
+      <ApartmentProp path={COZY.wallLamp} pos={[-2.2, 1.72, -3.95]} rot={Math.PI} />
+      <ApartmentProp path={COZY.wallLamp} pos={[ 2.2, 1.72, -3.95]} rot={Math.PI} />
 
-      {/* ── Decorative wall mirror — north wall, east side ───────────────── */}
-      {/* ymin=-0.465 so y=1.1 centers the mirror at chest-to-eye height */}
-      <ApartmentProp path={COZY.wallMirror} pos={[2.8, 1.1, -3.91]} rot={Math.PI} />
+      {/* ── Decorative wall mirror — north wall, east of window ─────────── */}
+      <ApartmentProp path={COZY.wallMirror} pos={[3.0, 1.1, -3.91]} rot={Math.PI} />
     </>
   )
 }
@@ -177,55 +176,104 @@ function RoomProps() {
     <>
       {/* Laundry chair — southeast corner with clothes pile (very Florentin) */}
       <group position={[2.8, 0, 2.8]}>
-        <mesh position={[0, 0.45, 0]} castShadow>
-          <boxGeometry args={[0.65, 0.08, 0.65]} />
+        {/* 4 legs */}
+        {([[-0.25, -0.25], [0.25, -0.25], [-0.25, 0.25], [0.25, 0.25]] as [number,number][]).map(([lx, lz], i) => (
+          <mesh key={i} position={[lx, 0.22, lz]} castShadow>
+            <boxGeometry args={[0.05, 0.44, 0.05]} />
+            <meshStandardMaterial color="#5a4a3a" roughness={0.9} />
+          </mesh>
+        ))}
+        {/* Seat */}
+        <mesh position={[0, 0.46, 0]} castShadow>
+          <boxGeometry args={[0.60, 0.06, 0.60]} />
           <meshStandardMaterial color="#7a6752" roughness={0.9} />
         </mesh>
-        <mesh position={[0, 0.22, 0]} castShadow>
-          <boxGeometry args={[0.06, 0.45, 0.06]} />
-          <meshStandardMaterial color="#5a4a3a" roughness={0.9} />
-        </mesh>
-        <mesh position={[0, 0.52, 0]} castShadow>
+        {/* Clothes pile — resting ON the seat (bottom at seat top y=0.49) */}
+        <mesh position={[0.05, 0.77, 0.05]} rotation={[0.1, 0.2, 0.05]} castShadow>
           <sphereGeometry args={[0.28, 6, 4]} />
           <meshStandardMaterial color="#8b6e8b" roughness={1} />
         </mesh>
       </group>
 
-      {/* Half-dead plant — northwest corner */}
-      <group position={[-3.2, 0, -2.5]}>
+      {/* Half-dead plant — southwest corner near west wall */}
+      <group position={[-3.2, 0, 2.0]}>
         <mesh position={[0, 0.15, 0]} castShadow>
           <cylinderGeometry args={[0.18, 0.22, 0.3, 8]} />
           <meshStandardMaterial color="#8b6038" roughness={0.9} />
         </mesh>
-        <mesh position={[0, 0.45, 0]} castShadow>
-          <sphereGeometry args={[0.28, 8, 6]} />
+        <mesh position={[0, 0.46, 0]} castShadow>
+          <sphereGeometry args={[0.30, 8, 6]} />
           <meshStandardMaterial color="#5a7a3a" roughness={1} />
+        </mesh>
+        {/* Drooping leaves */}
+        <mesh position={[0.22, 0.38, 0]} rotation={[0, 0, 0.7]} castShadow>
+          <sphereGeometry args={[0.14, 6, 4]} />
+          <meshStandardMaterial color="#4a6a2a" roughness={1} />
         </mesh>
       </group>
 
-      {/* Electric kettle — atop the fridge */}
-      <mesh position={[-2.5, 1.55, -1.4]} castShadow>
+      {/* Fridge note paper taped to fridge (visual detail) */}
+      <mesh position={[-2.5, 1.1, -1.68]} castShadow>
+        <boxGeometry args={[0.18, 0.22, 0.01]} />
+        <meshStandardMaterial color="#f5f0e0" roughness={0.7} />
+      </mesh>
+
+      {/* Electric kettle — exactly atop the fridge */}
+      {/* Fridge top = y(0.75) + halfH(0.75) = 1.5; kettle halfH = 0.11 → center y=1.61 */}
+      <mesh position={[-2.5, 1.61, -2.0]} castShadow>
         <cylinderGeometry args={[0.1, 0.12, 0.22, 8]} />
         <meshStandardMaterial color="#d0d0d0" metalness={0.5} roughness={0.4} />
       </mesh>
+      {/* Kettle lid */}
+      <mesh position={[-2.5, 1.74, -2.0]} castShadow>
+        <cylinderGeometry args={[0.07, 0.10, 0.04, 8]} />
+        <meshStandardMaterial color="#b0b0b0" metalness={0.6} roughness={0.3} />
+      </mesh>
 
-      {/* Window frame on north wall */}
-      <group position={[0, 1.8, -3.95]}>
+      {/* Pillow — resting on the mattress head end */}
+      {/* Mattress top y = 0.15+0.15 = 0.30; pillow bottom at 0.30 → center y=0.37 */}
+      <mesh position={[0, 0.37, 1.5]} rotation={[0, 0.05, 0]} castShadow>
+        <boxGeometry args={[0.75, 0.14, 0.48]} />
+        <meshStandardMaterial color="#e8ddd0" roughness={0.9} />
+      </mesh>
+
+      {/* Rumpled blanket near the foot of the mattress */}
+      <mesh position={[0.2, 0.36, 2.25]} rotation={[0.15, 0.12, 0.08]} castShadow>
+        <boxGeometry args={[1.3, 0.12, 0.65]} />
+        <meshStandardMaterial color="#9b87a3" roughness={1.0} />
+      </mesh>
+
+      {/* Window frame on north wall — with crossbars */}
+      <group position={[0, 1.85, -3.95]}>
+        {/* Frame */}
         <mesh castShadow>
-          <boxGeometry args={[1.6, 1.2, 0.06]} />
+          <boxGeometry args={[1.6, 1.1, 0.07]} />
           <meshStandardMaterial color="#c8b89a" roughness={0.8} />
         </mesh>
-        <mesh position={[0, 0, 0.04]}>
-          <boxGeometry args={[1.4, 1.0, 0.02]} />
-          <meshStandardMaterial
-            color="#b8d4e8"
-            transparent
-            opacity={0.5}
-            emissive="#6090b8"
-            emissiveIntensity={0.15}
-          />
+        {/* Glass */}
+        <mesh position={[0, 0, 0.045]}>
+          <boxGeometry args={[1.38, 0.90, 0.02]} />
+          <meshStandardMaterial color="#b8d4e8" transparent opacity={0.45} emissive="#6090b8" emissiveIntensity={0.18} />
+        </mesh>
+        {/* Horizontal crossbar */}
+        <mesh position={[0, 0, 0.05]}>
+          <boxGeometry args={[1.38, 0.04, 0.025]} />
+          <meshStandardMaterial color="#c8b89a" roughness={0.8} />
+        </mesh>
+        {/* Vertical crossbar */}
+        <mesh position={[0, 0, 0.05]}>
+          <boxGeometry args={[0.04, 0.90, 0.025]} />
+          <meshStandardMaterial color="#c8b89a" roughness={0.8} />
         </mesh>
       </group>
+
+      {/* Small stack of books on the floor beside the coffee table */}
+      {[0, 0.04, 0.08].map((yOff, i) => (
+        <mesh key={i} position={[0.55, 0.02 + yOff, 0.45]} rotation={[0, i * 0.15, 0]} castShadow>
+          <boxGeometry args={[0.20, 0.03, 0.27]} />
+          <meshStandardMaterial color={['#c47a45', '#5a7ab8', '#7ab85a'][i]} roughness={0.8} />
+        </mesh>
+      ))}
     </>
   )
 }
@@ -258,25 +306,31 @@ export function ApartmentScene() {
 
       {/* Ceiling omitted intentionally — open top gives the Sims diorama view */}
 
-      {/* ── North wall — the single back wall (Sims-style: furthest from camera) */}
+      {/* ── North wall ───────────────────────────────────────────────────── */}
       <mesh position={[0, 1.5, -4]} receiveShadow>
         <boxGeometry args={[8, 3, 0.12]} />
         <meshStandardMaterial color={wallCol} roughness={0.9} />
       </mesh>
 
-      {/* ── East wall — right-side back wall visible from south-facing camera */}
+      {/* ── East wall ────────────────────────────────────────────────────── */}
       <mesh position={[4, 1.5, 0]} receiveShadow>
         <boxGeometry args={[0.12, 3, 8]} />
         <meshStandardMaterial color={wallCol} roughness={0.9} />
       </mesh>
 
-      {/* West wall omitted — cut away for camera visibility (Sims convention) */}
-      {/* Ceiling omitted — the missing ceiling gives the diorama/Sims top-down view */}
+      {/* ── West wall — closes the room on the left (camera looks from south) */}
+      <mesh position={[-4, 1.5, 0]} receiveShadow>
+        <boxGeometry args={[0.12, 3, 8]} />
+        <meshStandardMaterial color={wallCol} roughness={0.9} />
+      </mesh>
 
-      {/* ── Skirting boards (north and east only) ──────────────────────── */}
+      {/* Ceiling omitted — open top gives the Sims diorama view */}
+
+      {/* ── Skirting boards (north, east, west) ─────────────────────────── */}
       {([
         { pos: [0, 0.06, -3.94]  as Vector3Tuple, args: [8,    0.12, 0.04] as Vector3Tuple },
         { pos: [3.94, 0.06, 0]   as Vector3Tuple, args: [0.04, 0.12, 8   ] as Vector3Tuple },
+        { pos: [-3.94, 0.06, 0]  as Vector3Tuple, args: [0.04, 0.12, 8   ] as Vector3Tuple },
       ] as const).map(({ pos, args }, i) => (
         <mesh key={i} position={pos} receiveShadow>
           <boxGeometry args={args} />

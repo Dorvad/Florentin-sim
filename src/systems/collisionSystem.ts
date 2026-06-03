@@ -21,15 +21,15 @@ const BOXES: Box[] = [
   { cx: -13, cz:  -2, hw: 4.5, hd: 4.5 }, // kb_w_tower_d
   { cx: -16, cz: -27, hw: 5.0, hd: 5.0 }, // kb_w_tower_b
 
-  // ── Parked cars – east curb (x ≈ +4.5) ─────────────────────────────────
-  { cx:  4.5, cz:  -1, hw: 0.75, hd: 1.28 }, // car_e_sedan
-  { cx:  4.5, cz: -16, hw: 0.75, hd: 1.28 }, // car_e_taxi
-  { cx:  4.5, cz: -30, hw: 0.90, hd: 1.75 }, // car_e_van
+  // ── Parked cars – east curb (x ≈ +4.5, rotated to face road) ───────────
+  { cx:  4.5, cz:  -4, hw: 1.28, hd: 0.75 }, // car_e_sedan
+  { cx:  4.5, cz: -16, hw: 1.28, hd: 0.75 }, // car_e_taxi
+  { cx:  4.5, cz: -28, hw: 1.75, hd: 0.90 }, // car_e_van
 
-  // ── Parked cars – west curb (x ≈ -4.5) ─────────────────────────────────
-  { cx: -4.5, cz: -13, hw: 0.70, hd: 1.00 }, // car_w_hatch
-  { cx: -4.5, cz: -22, hw: 0.75, hd: 1.10 }, // car_w_sport
-  { cx: -4.5, cz: -36, hw: 0.80, hd: 1.25 }, // car_w_suv
+  // ── Parked cars – west curb (x ≈ -4.5, rotated to face road) ────────────
+  { cx: -4.5, cz:  -8, hw: 1.00, hd: 0.70 }, // car_w_hatch
+  { cx: -4.5, cz: -20, hw: 1.10, hd: 0.75 }, // car_w_sport
+  { cx: -4.5, cz: -36, hw: 1.25, hd: 0.80 }, // car_w_suv
 
   // ── New south terminus building ─────────────────────────────────────────
   { cx: 16, cz: -50, hw: 4.5, hd: 4.5 },   // kb_e_house_a
@@ -74,5 +74,24 @@ export function resolveCollisions(px: number, pz: number): [number, number] {
   let z = pz
   for (const b of BOXES)    [x, z] = resolveBox(x, z, b)
   for (const c of CIRCLES)  [x, z] = resolveCircle(x, z, c)
+  return [x, z]
+}
+
+// ── Apartment collision ────────────────────────────────────────────────────
+// Room: x∈[-4,+4], z∈[-4,+4]. North and east walls are rendered (0.12 thick).
+// West wall is rendered too (added for visual closure). South is open for camera.
+
+const APARTMENT_FURNITURE: Box[] = [
+  { cx: -2.5, cz: -2.0, hw: 0.33, hd: 0.33 }, // fridge (0.65×0.65)
+  { cx:  0.0, cz:  2.0, hw: 1.0,  hd: 0.6  }, // mattress (2×1.2)
+  { cx: -2.0, cz:  0.8, hw: 0.4,  hd: 0.4  }, // work table (approx)
+]
+
+export function resolveApartmentCollisions(px: number, pz: number): [number, number] {
+  // Wall inner faces: north z=-3.94, east x=3.94, west x=-3.94; south open (soft)
+  // Clamp adds player radius (0.4) margin from each face
+  let x = Math.max(-3.54, Math.min(3.54, px))
+  let z = Math.max(-3.54, Math.min(3.6, pz))
+  for (const b of APARTMENT_FURNITURE) [x, z] = resolveBox(x, z, b)
   return [x, z]
 }

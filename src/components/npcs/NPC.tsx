@@ -15,7 +15,13 @@ const MODEL_SCALE = 0.64
 const FEET_OFFSET = 0
 const INDICATOR_BOB_SPEED = 2
 const INDICATOR_BOB_AMOUNT = 0.15
-const ANIM_IDLE = 'CharacterArmature|CharacterArmature|Idle'
+
+// Ordered list of idle animation names to try — supports both Kenney and UAL packs
+const IDLE_ANIM_NAMES = [
+  'CharacterArmature|CharacterArmature|Idle',
+  'Idle_Loop',
+  'Idle',
+]
 
 // ── NPCPlaceholder ────────────────────────────────────────────────────────
 
@@ -39,7 +45,7 @@ function NPCPlaceholder({ color }: { color: string }) {
 // useAnimations attaches an AnimationMixer to the group and resolves bone
 // targets by name within the scene subtree.
 
-function NPCModel({ modelPath }: { modelPath: string }) {
+function NPCModel({ modelPath, modelScale = MODEL_SCALE }: { modelPath: string; modelScale?: number }) {
   const groupRef = useRef<Group>(null)
   const { scene, animations } = useGLTF(modelPath)
   const { actions } = useAnimations(animations, groupRef)
@@ -60,12 +66,17 @@ function NPCModel({ modelPath }: { modelPath: string }) {
   }, [scene])
 
   useEffect(() => {
-    actions[ANIM_IDLE]?.play()
+    for (const name of IDLE_ANIM_NAMES) {
+      if (actions[name]) {
+        actions[name].reset().play()
+        break
+      }
+    }
   }, [actions])
 
   return (
     <group ref={groupRef}>
-      <primitive object={scene} scale={MODEL_SCALE} position={[0, FEET_OFFSET, 0]} castShadow />
+      <primitive object={scene} scale={modelScale} position={[0, FEET_OFFSET, 0]} castShadow />
     </group>
   )
 }
@@ -92,7 +103,7 @@ export function NPC({ data }: NPCProps) {
     <group position={data.position}>
       {data.modelPath ? (
         <Suspense fallback={<NPCPlaceholder color={data.color} />}>
-          <NPCModel modelPath={data.modelPath} />
+          <NPCModel modelPath={data.modelPath} modelScale={data.modelScale} />
         </Suspense>
       ) : (
         <NPCPlaceholder color={data.color} />

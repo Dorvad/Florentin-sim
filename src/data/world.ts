@@ -18,26 +18,29 @@ export const GROUND_SIZE = 120
 // ── Street tiles ───────────────────────────────────────────────────────────
 
 export const streetTiles: StreetTileData[] = [
-  // Main street – north-south 2-lane, 4 tiles
-  { id: 'street_ns_0',  modelPath: '/assets/models/street_2lane.glb', position: [0, 0,  0] },
-  { id: 'street_ns_1',  modelPath: '/assets/models/street_2lane.glb', position: [0, 0, -12] },
+  // Main street – north-south 2-lane
+  // street_ns_1 at z=-12 is replaced by the 4-way intersection tile below
+  { id: 'street_ns_0',  modelPath: '/assets/models/street_2lane.glb', position: [0, 0,   0] },
   { id: 'street_ns_2',  modelPath: '/assets/models/street_2lane.glb', position: [0, 0, -24] },
   { id: 'street_ns_3',  modelPath: '/assets/models/street_2lane.glb', position: [0, 0, -36] },
+  { id: 'street_ns_4',  modelPath: '/assets/models/street_2lane.glb', position: [0, 0, -48] },
 
-  // T-intersection at Z=-12 (4-way for now, rotated 180° to face south)
+  // 4-way intersection at Z=-12 (replaces the 2-lane tile, rotated to face south)
   { id: 'street_4way',  modelPath: '/assets/models/street_4way.glb',  position: [0, 0, -12], rotation: Math.PI },
 
   // Sidewalks – east side (X = 6)
-  { id: 'sw_e_0', modelPath: '/assets/models/sidewalk_straight.glb', position: [6, 0,  -6] },
-  { id: 'sw_e_1', modelPath: '/assets/models/sidewalk_straight.glb', position: [6, 0, -18] },
-  { id: 'sw_e_2', modelPath: '/assets/models/sidewalk_straight.glb', position: [6, 0, -30] },
-  { id: 'sw_e_3', modelPath: '/assets/models/sidewalk_straight.glb', position: [6, 0, -42] },
+  { id: 'sw_e_0', modelPath: '/assets/models/sidewalk_straight.glb', position: [6, 0,   0] },
+  { id: 'sw_e_1', modelPath: '/assets/models/sidewalk_straight.glb', position: [6, 0, -12] },
+  { id: 'sw_e_2', modelPath: '/assets/models/sidewalk_straight.glb', position: [6, 0, -24] },
+  { id: 'sw_e_3', modelPath: '/assets/models/sidewalk_straight.glb', position: [6, 0, -36] },
+  { id: 'sw_e_4', modelPath: '/assets/models/sidewalk_straight.glb', position: [6, 0, -48] },
 
   // Sidewalks – west side (X = -6)
-  { id: 'sw_w_0', modelPath: '/assets/models/sidewalk_straight.glb', position: [-6, 0,  -6], rotation: Math.PI },
-  { id: 'sw_w_1', modelPath: '/assets/models/sidewalk_straight.glb', position: [-6, 0, -18], rotation: Math.PI },
-  { id: 'sw_w_2', modelPath: '/assets/models/sidewalk_straight.glb', position: [-6, 0, -30], rotation: Math.PI },
-  { id: 'sw_w_3', modelPath: '/assets/models/sidewalk_straight.glb', position: [-6, 0, -42], rotation: Math.PI },
+  { id: 'sw_w_0', modelPath: '/assets/models/sidewalk_straight.glb', position: [-6, 0,   0], rotation: Math.PI },
+  { id: 'sw_w_1', modelPath: '/assets/models/sidewalk_straight.glb', position: [-6, 0, -12], rotation: Math.PI },
+  { id: 'sw_w_2', modelPath: '/assets/models/sidewalk_straight.glb', position: [-6, 0, -24], rotation: Math.PI },
+  { id: 'sw_w_3', modelPath: '/assets/models/sidewalk_straight.glb', position: [-6, 0, -36], rotation: Math.PI },
+  { id: 'sw_w_4', modelPath: '/assets/models/sidewalk_straight.glb', position: [-6, 0, -48], rotation: Math.PI },
 
   // Planters scattered along sidewalks
   { id: 'planter_e_0', modelPath: '/assets/models/sidewalk_planter.glb', position: [ 8, 0,  -8] },
@@ -56,15 +59,15 @@ export const streetTiles: StreetTileData[] = [
 // NPC-clear zones: Avi [4,-6], Dana [-5,-3], Noa [-3,-10]
 
 export const streetProps: StreetPropData[] = [
-  // ── Parked cars – east curb ──────────────────────────────────────────────
-  { id: 'car_e_sedan',   modelPath: '/assets/models/car_sedan.glb',       position: [4.5, 0, -1],  rotation: 0 },
-  { id: 'car_e_taxi',    modelPath: '/assets/models/car_taxi.glb',         position: [4.5, 0, -16], rotation: Math.PI },
-  { id: 'car_e_van',     modelPath: '/assets/models/car_van.glb',          position: [4.5, 0, -30], rotation: 0 },
+  // ── Parked cars – east curb (x=4.5, facing road) ────────────────────────
+  { id: 'car_e_sedan',   modelPath: '/assets/models/car_sedan.glb',       position: [4.5, 0,  -4],  rotation: -Math.PI / 2 },
+  { id: 'car_e_taxi',    modelPath: '/assets/models/car_taxi.glb',         position: [4.5, 0, -16], rotation: -Math.PI / 2 },
+  { id: 'car_e_van',     modelPath: '/assets/models/car_van.glb',          position: [4.5, 0, -28], rotation: -Math.PI / 2 },
 
-  // ── Parked cars – west curb ──────────────────────────────────────────────
-  { id: 'car_w_hatch',   modelPath: '/assets/models/car_hatchback.glb',    position: [-4.5, 0, -13], rotation: Math.PI },
-  { id: 'car_w_sport',   modelPath: '/assets/models/car_sedan_sports.glb', position: [-4.5, 0, -22], rotation: 0 },
-  { id: 'car_w_suv',     modelPath: '/assets/models/car_suv.glb',          position: [-4.5, 0, -36], rotation: Math.PI },
+  // ── Parked cars – west curb (x=-4.5, facing road) ────────────────────────
+  { id: 'car_w_hatch',   modelPath: '/assets/models/car_hatchback.glb',    position: [-4.5, 0,  -8], rotation:  Math.PI / 2 },
+  { id: 'car_w_sport',   modelPath: '/assets/models/car_sedan_sports.glb', position: [-4.5, 0, -20], rotation:  Math.PI / 2 },
+  { id: 'car_w_suv',     modelPath: '/assets/models/car_suv.glb',          position: [-4.5, 0, -36], rotation:  Math.PI / 2 },
 
   // ── Street lamps ─────────────────────────────────────────────────────────
   { id: 'lamp_e_0', modelPath: '/assets/models/retro/detail-light-single.glb', position: [6.8, 0,  -8], scale: 5 },
