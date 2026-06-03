@@ -192,6 +192,32 @@ export const dialogueTrees: Record<string, DialogueTree> = {
     },
   },
 
+  // ── Street: apartment building entrance ──────────────────────────────────
+
+  home_entrance: {
+    id: 'home_entrance',
+    startNode: 'prompt',
+    nodes: {
+      prompt: {
+        id: 'prompt',
+        lines: [
+          { speaker: 'Your Building', text: 'Back upstairs?' },
+        ],
+        choices: [
+          {
+            label: 'Yeah, I need a minute.',
+            nextNode: null,
+            transitionArea: 'apartment',
+          },
+          {
+            label: 'Not yet.',
+            nextNode: null,
+          },
+        ],
+      },
+    },
+  },
+
   // ── Street NPCs ───────────────────────────────────────────────────────────
 
   moti_intro: {

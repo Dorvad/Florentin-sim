@@ -2,8 +2,11 @@ import { Suspense } from 'react'
 import { Sky, useGLTF } from '@react-three/drei'
 import { buildingData, streetProps, streetTiles } from '@/data/world'
 import { npcData } from '@/data/npcs'
+import { streetObjects } from '@/data/streetObjects'
 import { useGameStore } from '@/stores/gameStore'
 import { Ground } from './Ground'
+import { RoadSurface } from './RoadSurface'
+import { StreetEntrance } from './StreetEntrance'
 import { Building } from './Building'
 import { StreetTile } from './StreetTile'
 import { StreetProp } from './StreetProp'
@@ -11,6 +14,7 @@ import { ApartmentScene } from './ApartmentScene'
 import { Player } from '@/components/player/Player'
 import { NPC } from '@/components/npcs/NPC'
 import { useNPCInteraction } from '@/hooks/useNPCInteraction'
+import { useObjectInteraction } from '@/hooks/useObjectInteraction'
 import { PlayerFallback } from '@/components/player/PlayerFallback'
 
 // Preload all NPC models (including animation packs) as soon as the module is imported
@@ -32,8 +36,9 @@ uniquePropPaths.forEach((p) => useGLTF.preload(p))
 export function GameWorld() {
   const currentArea = useGameStore((s) => s.currentArea)
 
-  // NPC interaction only active on the street — empty array in apartment
+  // Interaction hooks — active for their respective area only
   useNPCInteraction(currentArea === 'street' ? npcData : [])
+  useObjectInteraction(currentArea === 'street' ? streetObjects : [])
 
   const isApartment = currentArea === 'apartment'
 
@@ -66,14 +71,20 @@ export function GameWorld() {
         <ApartmentScene />
       ) : (
         <>
-          {/* Ground */}
+          {/* Ground base + flat pavement surface */}
           <Ground />
+          <RoadSurface />
 
-          {/* Street tiles */}
+          {/* Street tiles (empty — road replaced by RoadSurface above) */}
           <Suspense fallback={null}>
             {streetTiles.map((t) => (
               <StreetTile key={t.id} {...t} />
             ))}
+          </Suspense>
+
+          {/* Apartment building entrance */}
+          <Suspense fallback={null}>
+            <StreetEntrance />
           </Suspense>
 
           {/* Buildings */}

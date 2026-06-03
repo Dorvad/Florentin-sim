@@ -17,37 +17,8 @@ export const GROUND_SIZE = 120
 
 // ── Street tiles ───────────────────────────────────────────────────────────
 
-export const streetTiles: StreetTileData[] = [
-  // Main street – north-south 2-lane
-  // street_ns_1 at z=-12 is replaced by the 4-way intersection tile below
-  { id: 'street_ns_0',  modelPath: '/assets/models/street_2lane.glb', position: [0, 0,   0] },
-  { id: 'street_ns_2',  modelPath: '/assets/models/street_2lane.glb', position: [0, 0, -24] },
-  { id: 'street_ns_3',  modelPath: '/assets/models/street_2lane.glb', position: [0, 0, -36] },
-  { id: 'street_ns_4',  modelPath: '/assets/models/street_2lane.glb', position: [0, 0, -48] },
-
-  // 4-way intersection at Z=-12 (replaces the 2-lane tile, rotated to face south)
-  { id: 'street_4way',  modelPath: '/assets/models/street_4way.glb',  position: [0, 0, -12], rotation: Math.PI },
-
-  // Sidewalks – east side (X = 6)
-  { id: 'sw_e_0', modelPath: '/assets/models/sidewalk_straight.glb', position: [6, 0,   0] },
-  { id: 'sw_e_1', modelPath: '/assets/models/sidewalk_straight.glb', position: [6, 0, -12] },
-  { id: 'sw_e_2', modelPath: '/assets/models/sidewalk_straight.glb', position: [6, 0, -24] },
-  { id: 'sw_e_3', modelPath: '/assets/models/sidewalk_straight.glb', position: [6, 0, -36] },
-  { id: 'sw_e_4', modelPath: '/assets/models/sidewalk_straight.glb', position: [6, 0, -48] },
-
-  // Sidewalks – west side (X = -6)
-  { id: 'sw_w_0', modelPath: '/assets/models/sidewalk_straight.glb', position: [-6, 0,   0], rotation: Math.PI },
-  { id: 'sw_w_1', modelPath: '/assets/models/sidewalk_straight.glb', position: [-6, 0, -12], rotation: Math.PI },
-  { id: 'sw_w_2', modelPath: '/assets/models/sidewalk_straight.glb', position: [-6, 0, -24], rotation: Math.PI },
-  { id: 'sw_w_3', modelPath: '/assets/models/sidewalk_straight.glb', position: [-6, 0, -36], rotation: Math.PI },
-  { id: 'sw_w_4', modelPath: '/assets/models/sidewalk_straight.glb', position: [-6, 0, -48], rotation: Math.PI },
-
-  // Planters scattered along sidewalks
-  { id: 'planter_e_0', modelPath: '/assets/models/sidewalk_planter.glb', position: [ 8, 0,  -8] },
-  { id: 'planter_e_1', modelPath: '/assets/models/sidewalk_planter.glb', position: [ 8, 0, -22] },
-  { id: 'planter_w_0', modelPath: '/assets/models/sidewalk_planter.glb', position: [-8, 0, -14] },
-  { id: 'planter_w_1', modelPath: '/assets/models/sidewalk_planter.glb', position: [-8, 0, -32] },
-]
+// Street tiles replaced with flat pavement geometry in RoadSurface.tsx
+export const streetTiles: StreetTileData[] = []
 
 // ── Street props (parked cars + furniture) ─────────────────────────────────
 // Cars: Kenney Car Kit, scale 1 (geometry already in metres).

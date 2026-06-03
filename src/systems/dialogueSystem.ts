@@ -43,13 +43,11 @@ export function selectChoice(choice: DialogueChoice): void {
     store.markApartmentInteracted()
   }
 
-  // Handle area transition (e.g. leaving the apartment via the door)
+  // Handle area transition (apartment ↔ street)
   if (choice.transitionArea) {
     store.endDialogue()
     store.setCurrentArea(choice.transitionArea)
-    if (choice.transitionArea === 'street') {
-      store.setPlayerPosition([0, 0, 0])
-    }
+    store.setPlayerPosition([0, 0, 0])
     return
   }
 

@@ -5,6 +5,9 @@ import { useGameStore } from '@/stores/gameStore'
 import { useInputStore } from '@/stores/inputStore'
 import { resolveCollisions, resolveApartmentCollisions } from '@/systems/collisionSystem'
 
+// Resets the mesh to origin when the scene switches so the player spawns
+// at [0,0,0] in both areas (meshRef.current.position is three.js mutable state).
+
 const SPEED = 5
 const TURN_SPEED = 10
 const KEYS = new Set(['w', 'a', 's', 'd', 'arrowup', 'arrowleft', 'arrowdown', 'arrowright'])
@@ -22,6 +25,12 @@ export function usePlayerMovement() {
   const isMovingRef = useRef(false)
   const activeDialogue = useGameStore((s) => s.activeDialogue)
   const setPlayerPosition = useGameStore((s) => s.setPlayerPosition)
+  const currentArea = useGameStore((s) => s.currentArea)
+
+  useEffect(() => {
+    if (!meshRef.current) return
+    meshRef.current.position.set(0, 0, 0)
+  }, [currentArea])
 
   useEffect(() => {
     const onDown = (e: KeyboardEvent) => held.current.add(e.key.toLowerCase())

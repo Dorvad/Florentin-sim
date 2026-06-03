@@ -293,15 +293,15 @@ export function ApartmentScene() {
     if (!activeDialogue) openDialogue('wakeup_narration', '')
   }, [])
 
-  const wallCol  = '#d0c3a8'
-  const floorCol = '#b8a888'
+  const wallCol  = '#d8ccb8'   // warm off-white plaster
+  const floorCol = '#a8967a'   // worn wood / terracotta tile look
 
   return (
     <>
       {/* ── Floor ──────────────────────────────────────────────────────── */}
       <mesh position={[0, -0.02, 0]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
         <planeGeometry args={[8, 8]} />
-        <meshStandardMaterial color={floorCol} roughness={0.95} />
+        <meshStandardMaterial color={floorCol} roughness={0.82} metalness={0.02} />
       </mesh>
 
       {/* Ceiling omitted intentionally — open top gives the Sims diorama view */}
