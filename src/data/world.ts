@@ -89,6 +89,16 @@ export const streetProps: StreetPropData[] = [
   // ── Dumpsters (corner / alley vibes) ─────────────────────────────────────
   { id: 'dump_e_0', modelPath: '/assets/models/retro/detail-dumpster-closed.glb', position: [7.5, 0, -21], scale: 1.8 },
   { id: 'dump_w_0', modelPath: '/assets/models/retro/detail-dumpster-closed.glb', position: [-7.5, 0, -33], rotation: Math.PI, scale: 1.8 },
+
+  // ── Kenney Modular Buildings — east side ──────────────────────────────────
+  // scale=10 → ~11 m footprint; rot=π turns the façade to face the street west.
+  { id: 'kb_e_tower_c', modelPath: '/assets/models/buildings/building-sample-tower-c.glb', position: [16, 0, -5],  rotation: Math.PI, scale: 10 },
+  { id: 'kb_e_house_b', modelPath: '/assets/models/buildings/building-sample-house-b.glb', position: [16, 0, -17], rotation: Math.PI, scale: 10 },
+  { id: 'kb_e_tower_a', modelPath: '/assets/models/buildings/building-sample-tower-a.glb', position: [16, 0, -38], rotation: Math.PI, scale: 9  },
+
+  // ── Kenney Modular Buildings — west side ──────────────────────────────────
+  { id: 'kb_w_tower_d', modelPath: '/assets/models/buildings/building-sample-tower-d.glb', position: [-13, 0, -2],  scale: 9  },
+  { id: 'kb_w_tower_b', modelPath: '/assets/models/buildings/building-sample-tower-b.glb', position: [-16, 0, -27], scale: 10 },
 ]
 
 // ── Buildings ──────────────────────────────────────────────────────────────
@@ -128,23 +138,4 @@ export const buildingData: BuildingData[] = [
     modelPath: '/assets/models/building_large.glb',
   },
 
-  // ── Placeholder buildings (variety / density) ─────────────────────────────
-
-  // Corner café – east side, near player
-  {
-    id: 'cafe_corner',
-    position: [16, 1, -6],
-    size: [4, 2, 4],
-    color: '#8fbc8f',
-    label: 'HaKafe',
-  },
-
-  // Falafel shop – east side
-  {
-    id: 'falafel_shop',
-    position: [16, 1.5, -14],
-    size: [4, 3, 4],
-    color: '#c8a87e',
-    label: 'Falafel Vital',
-  },
 ]
