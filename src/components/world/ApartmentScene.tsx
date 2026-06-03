@@ -222,7 +222,6 @@ export function ApartmentScene() {
 
   const wallCol  = '#d0c3a8'
   const floorCol = '#b8a888'
-  const ceilCol  = '#ddd6c4'
 
   return (
     <>
@@ -232,11 +231,7 @@ export function ApartmentScene() {
         <meshStandardMaterial color={floorCol} roughness={0.95} />
       </mesh>
 
-      {/* ── Ceiling ────────────────────────────────────────────────────── */}
-      <mesh position={[0, 3.0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[8, 8]} />
-        <meshStandardMaterial color={ceilCol} roughness={1} side={2} />
-      </mesh>
+      {/* Ceiling omitted intentionally — open top gives the Sims diorama view */}
 
       {/* ── North wall — the single back wall (Sims-style: furthest from camera) */}
       <mesh position={[0, 1.5, -4]} receiveShadow>

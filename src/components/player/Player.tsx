@@ -1,13 +1,12 @@
-import { useMemo, useRef } from 'react'
+import { useMemo } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
 import { useGLTF } from '@react-three/drei'
 import { Mesh, MeshStandardMaterial, SkinnedMesh } from 'three'
 import { usePlayerMovement } from '@/hooks/usePlayerMovement'
+import { useGameStore } from '@/stores/gameStore'
 
-// Character GLBs have feet at local Y=0; no vertical offset needed.
 // All materials were exported with alpha=0 — fixed by traversal below.
 const MODEL_SCALE = 0.64
-const FEET_OFFSET = 0
 
 const CAMERA_OFFSET = { x: 0, y: 8, z: 10 }
 const CAMERA_LERP = 0.1
@@ -34,33 +33,25 @@ export function Player() {
     return clone
   }, [scene])
   const { camera } = useThree()
-  // cameraRef only used to satisfy linter; actual camera accessed via useThree
-  const _cameraRef = useRef(null)
-  void _cameraRef
 
   useFrame(() => {
-    if (!meshRef.current) return
-    const pos = meshRef.current.position
+    // Read directly from store (getState = no subscription, no re-render).
+    // This avoids the stale-closure / position-reset problem that arises when
+    // reading meshRef.current.position: Player re-renders whenever activeDialogue
+    // changes, and R3F would re-apply position={[0,0,0]} to the group, snapping
+    // the player back to the origin on every dialogue open/close.
+    const [px, py, pz] = useGameStore.getState().playerPosition
     camera.position.lerp(
-      {
-        x: pos.x + CAMERA_OFFSET.x,
-        y: pos.y + CAMERA_OFFSET.y,
-        z: pos.z + CAMERA_OFFSET.z,
-      } as never,
+      { x: px + CAMERA_OFFSET.x, y: py + CAMERA_OFFSET.y, z: pz + CAMERA_OFFSET.z } as never,
       CAMERA_LERP
     )
-    camera.lookAt(pos.x, pos.y + 1, pos.z)
+    camera.lookAt(px, py + 1, pz)
   })
 
+  // No position prop → R3F never resets the group; movement hook owns the position.
   return (
-    <group ref={meshRef} position={[0, 0, 0]}>
-      {/* Replace <primitive> with placeholder boxes to revert to placeholder */}
-      <primitive
-        object={clonedScene}
-        scale={MODEL_SCALE}
-        position={[0, FEET_OFFSET, 0]}
-        castShadow
-      />
+    <group ref={meshRef}>
+      <primitive object={clonedScene} scale={MODEL_SCALE} castShadow />
     </group>
   )
 }
