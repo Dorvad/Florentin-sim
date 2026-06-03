@@ -1,7 +1,8 @@
-import { useEffect, useRef, Suspense } from 'react'
+import { useEffect, useRef, useMemo, Suspense } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Text } from '@react-three/drei'
-import type { Mesh } from 'three'
+import { Text, useGLTF } from '@react-three/drei'
+import { Mesh } from 'three'
+import type { Vector3Tuple } from 'three'
 import { useGameStore } from '@/stores/gameStore'
 import { apartmentObjects } from '@/data/apartment'
 import { useObjectInteraction } from '@/hooks/useObjectInteraction'
@@ -11,6 +12,43 @@ import type { InteractableObjectData } from '@/types'
 
 // Plays once per page load — triggers the opening narration on first mount.
 let openingPlayed = false
+
+// Preload cozy interior models at module load so they're ready when the
+// apartment scene first renders.
+const COZY = {
+  nightstand:  '/assets/models/cozy/nightstand.glb',
+  coffeeTable: '/assets/models/cozy/coffeetable.glb',
+  table:       '/assets/models/cozy/table1.glb',
+  chair:       '/assets/models/cozy/chair1.glb',
+  floorLamp:   '/assets/models/cozy/floorlamp.glb',
+  squareRug:   '/assets/models/cozy/squarerug.glb',
+  wallLamp:    '/assets/models/cozy/walllamp.glb',
+  wallMirror:  '/assets/models/cozy/wallmirror.glb',
+}
+Object.values(COZY).forEach((p) => useGLTF.preload(p))
+
+// ── ApartmentProp ──────────────────────────────────────────────────────────
+// Loads and clones a GLB, preserving original atlas materials.
+// Used for all cozy-interior furniture that has its own baked texture.
+
+function ApartmentProp({ path, pos, rot = 0 }: {
+  path: string
+  pos: Vector3Tuple
+  rot?: number
+}) {
+  const { scene } = useGLTF(path)
+  const clone = useMemo(() => {
+    const c = scene.clone(true)
+    c.traverse((node) => {
+      if (node instanceof Mesh) {
+        node.castShadow = true
+        node.receiveShadow = true
+      }
+    })
+    return c
+  }, [scene])
+  return <primitive object={clone} position={pos} rotation-y={rot} />
+}
 
 // ── ApartmentObject ────────────────────────────────────────────────────────
 
@@ -29,13 +67,11 @@ function ApartmentObjectMesh({ data }: { data: InteractableObjectData }) {
 
   return (
     <group position={data.position}>
-      {/* Object body */}
       <mesh castShadow receiveShadow>
         <boxGeometry args={[w, h, d]} />
         <meshStandardMaterial color={data.color} roughness={0.75} metalness={0.1} />
       </mesh>
 
-      {/* Name label — wrapped so font load doesn't block the rest */}
       <Suspense fallback={null}>
         <Text
           position={[0, h / 2 + 0.18, 0]}
@@ -50,7 +86,6 @@ function ApartmentObjectMesh({ data }: { data: InteractableObjectData }) {
         </Text>
       </Suspense>
 
-      {/* Proximity indicator */}
       <mesh ref={indicatorRef} position={[0, h / 2 + 0.55, 0]}>
         <sphereGeometry args={[0.07, 8, 8]} />
         <meshStandardMaterial color="#f5c542" emissive="#f5c542" emissiveIntensity={0.9} />
@@ -59,13 +94,59 @@ function ApartmentObjectMesh({ data }: { data: InteractableObjectData }) {
   )
 }
 
-// ── Room furniture props ───────────────────────────────────────────────────
-// Simple non-interactive props to make the room feel lived-in.
+// ── CozyProps ──────────────────────────────────────────────────────────────
+// Cozy Interior Pack furniture — FBX→GLB converted, meter-scale, Y-up.
+// Room bounds: x∈[-4,+4], z∈[-4,+4], y∈[0,3]. South wall open for camera.
+//
+// Key occupied positions (do not overlap):
+//   Mattress [0,0.15,2]   size 2×0.3×1.2   → x[-1,1]  z[1.4,2.6]
+//   Fridge   [-2.5,0.75,-2] size 0.65×1.5×0.65
+//   Mirror   [3.45,1.2,0]   (east wall, interactive)
+//   Door     [0,1,-3.45]    (north wall)
+//   Window   [0,1.8,-3.95]  (north wall)
+
+function CozyProps() {
+  return (
+    <>
+      {/* ── Nightstand — east side of mattress head (z≈1.55, x=1.25) ───── */}
+      <ApartmentProp path={COZY.nightstand} pos={[1.25, 0, 1.55]} />
+
+      {/* ── Kitchen/work table — west side, clear of fridge ─────────────── */}
+      <ApartmentProp path={COZY.table} pos={[-2.0, 0, 0.8]} />
+
+      {/* ── Chair pulled up to table from south, facing north ───────────── */}
+      <ApartmentProp path={COZY.chair} pos={[-2.0, 0, 1.7]} rot={Math.PI} />
+
+      {/* ── Coffee table — open center-west space ───────────────────────── */}
+      <ApartmentProp path={COZY.coffeeTable} pos={[-0.5, 0, 0.05]} />
+
+      {/* ── Floor lamp — east side, between mirror wall and center ────────── */}
+      <ApartmentProp path={COZY.floorLamp} pos={[1.9, 0, -0.6]} />
+
+      {/* ── Square rug — under mattress (replaces the plain geometry rug) ── */}
+      <ApartmentProp path={COZY.squareRug} pos={[0, 0.015, 2]} />
+
+      {/* ── Wall lamp — west wall, above table/kitchen area ─────────────── */}
+      <ApartmentProp path={COZY.wallLamp} pos={[-3.95, 1.72, 0.5]} rot={-Math.PI / 2} />
+
+      {/* ── Wall lamp — north wall, east of window ───────────────────────── */}
+      <ApartmentProp path={COZY.wallLamp} pos={[2.0, 1.72, -3.95]} rot={Math.PI} />
+
+      {/* ── Decorative wall mirror — north wall, east side ───────────────── */}
+      {/* ymin=-0.465 so y=1.1 centers the mirror at chest-to-eye height */}
+      <ApartmentProp path={COZY.wallMirror} pos={[2.8, 1.1, -3.91]} rot={Math.PI} />
+    </>
+  )
+}
+
+// ── RoomProps ──────────────────────────────────────────────────────────────
+// Hand-crafted geometry props. The plain floor rug has been removed here
+// and replaced by the higher-quality squarerug GLB inside CozyProps.
 
 function RoomProps() {
   return (
     <>
-      {/* Laundry chair — southeast corner */}
+      {/* Laundry chair — southeast corner with clothes pile (very Florentin) */}
       <group position={[2.8, 0, 2.8]}>
         <mesh position={[0, 0.45, 0]} castShadow>
           <boxGeometry args={[0.65, 0.08, 0.65]} />
@@ -75,7 +156,6 @@ function RoomProps() {
           <boxGeometry args={[0.06, 0.45, 0.06]} />
           <meshStandardMaterial color="#5a4a3a" roughness={0.9} />
         </mesh>
-        {/* Pile of clothes on the chair */}
         <mesh position={[0, 0.52, 0]} castShadow>
           <sphereGeometry args={[0.28, 6, 4]} />
           <meshStandardMaterial color="#8b6e8b" roughness={1} />
@@ -94,29 +174,27 @@ function RoomProps() {
         </mesh>
       </group>
 
-      {/* Electric kettle — on the fridge area counter */}
+      {/* Electric kettle — atop the fridge */}
       <mesh position={[-2.5, 1.55, -1.4]} castShadow>
         <cylinderGeometry args={[0.1, 0.12, 0.22, 8]} />
         <meshStandardMaterial color="#d0d0d0" metalness={0.5} roughness={0.4} />
       </mesh>
 
-      {/* Small rug under mattress */}
-      <mesh position={[0, 0.01, 2]} receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[2.6, 2.0]} />
-        <meshStandardMaterial color="#7a5c8a" roughness={1} />
-      </mesh>
-
       {/* Window frame on north wall */}
       <group position={[0, 1.8, -3.95]}>
-        {/* Window frame border */}
-        <mesh>
+        <mesh castShadow>
           <boxGeometry args={[1.6, 1.2, 0.06]} />
           <meshStandardMaterial color="#c8b89a" roughness={0.8} />
         </mesh>
-        {/* Glass — slightly emissive to suggest daylight */}
         <mesh position={[0, 0, 0.04]}>
           <boxGeometry args={[1.4, 1.0, 0.02]} />
-          <meshStandardMaterial color="#b8d4e8" transparent opacity={0.5} emissive="#6090b8" emissiveIntensity={0.15} />
+          <meshStandardMaterial
+            color="#b8d4e8"
+            transparent
+            opacity={0.5}
+            emissive="#6090b8"
+            emissiveIntensity={0.15}
+          />
         </mesh>
       </group>
     </>
@@ -131,14 +209,12 @@ function RoomProps() {
 export function ApartmentScene() {
   const apartmentInteracted = useGameStore((s) => s.apartmentInteracted)
 
-  // Show door only after the player has inspected at least one object
   const visibleObjects = apartmentObjects.filter(
     (o) => o.id !== 'apartment_door' || apartmentInteracted
   )
 
   useObjectInteraction(visibleObjects)
 
-  // Trigger the opening narration exactly once per page load
   useEffect(() => {
     if (openingPlayed) return
     openingPlayed = true
@@ -146,7 +222,6 @@ export function ApartmentScene() {
     if (!activeDialogue) openDialogue('wakeup_narration', '')
   }, [])
 
-  // Wall / floor colours
   const wallCol  = '#d0c3a8'
   const floorCol = '#b8a888'
   const ceilCol  = '#ddd6c4'
@@ -165,40 +240,45 @@ export function ApartmentScene() {
         <meshStandardMaterial color={ceilCol} roughness={1} side={2} />
       </mesh>
 
-      {/* ── North wall (z = -4, the back wall with the window) ─────────── */}
+      {/* ── North wall ─────────────────────────────────────────────────── */}
       <mesh position={[0, 1.5, -4]} receiveShadow>
         <boxGeometry args={[8, 3, 0.12]} />
         <meshStandardMaterial color={wallCol} roughness={0.9} />
       </mesh>
 
-      {/* ── East wall (x = +4) ─────────────────────────────────────────── */}
+      {/* ── East wall ──────────────────────────────────────────────────── */}
       <mesh position={[4, 1.5, 0]} receiveShadow>
         <boxGeometry args={[0.12, 3, 8]} />
         <meshStandardMaterial color={wallCol} roughness={0.9} />
       </mesh>
 
-      {/* ── West wall (x = -4) ─────────────────────────────────────────── */}
+      {/* ── West wall ──────────────────────────────────────────────────── */}
       <mesh position={[-4, 1.5, 0]} receiveShadow>
         <boxGeometry args={[0.12, 3, 8]} />
         <meshStandardMaterial color={wallCol} roughness={0.9} />
       </mesh>
 
-      {/* ── Skirting board / baseboard trim ────────────────────────────── */}
-      {[
-        { pos: [0, 0.06, -3.94] as [number,number,number],  args: [8, 0.12, 0.04] as [number,number,number] },
-        { pos: [3.94, 0.06, 0] as [number,number,number],   args: [0.04, 0.12, 8] as [number,number,number] },
-        { pos: [-3.94, 0.06, 0] as [number,number,number],  args: [0.04, 0.12, 8] as [number,number,number] },
-      ].map(({ pos, args }, i) => (
+      {/* ── Skirting boards ────────────────────────────────────────────── */}
+      {([
+        { pos: [0, 0.06, -3.94] as Vector3Tuple, args: [8, 0.12, 0.04] as Vector3Tuple },
+        { pos: [3.94, 0.06, 0]  as Vector3Tuple, args: [0.04, 0.12, 8] as Vector3Tuple },
+        { pos: [-3.94, 0.06, 0] as Vector3Tuple, args: [0.04, 0.12, 8] as Vector3Tuple },
+      ] as const).map(({ pos, args }, i) => (
         <mesh key={i} position={pos} receiveShadow>
           <boxGeometry args={args} />
           <meshStandardMaterial color="#b8a888" roughness={0.7} />
         </mesh>
       ))}
 
-      {/* ── Room props ──────────────────────────────────────────────────── */}
+      {/* ── Hand-crafted room details ───────────────────────────────────── */}
       <RoomProps />
 
-      {/* ── Interactable objects ────────────────────────────────────────── */}
+      {/* ── Cozy interior furniture (GLB models) ────────────────────────── */}
+      <Suspense fallback={null}>
+        <CozyProps />
+      </Suspense>
+
+      {/* ── Interactable objects (boxes with interaction system) ────────── */}
       {visibleObjects.map((obj) => (
         <ApartmentObjectMesh key={obj.id} data={obj} />
       ))}
