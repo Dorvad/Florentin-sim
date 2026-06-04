@@ -1,6 +1,6 @@
 import { useEffect, useRef, Suspense } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Text, useGLTF, useAnimations } from '@react-three/drei'
+import { Billboard, Text, useGLTF, useAnimations } from '@react-three/drei'
 import { Mesh, MeshStandardMaterial, SkinnedMesh } from 'three'
 import type { Group } from 'three'
 import type { MutableRefObject } from 'react'
@@ -215,17 +215,19 @@ export function NPC({ data }: NPCProps) {
         <NPCPlaceholder color={data.color} />
       )}
 
-      <Text
-        position={[0, 2.2, 0]}
-        fontSize={0.22}
-        color="white"
-        anchorX="center"
-        anchorY="bottom"
-        outlineWidth={0.02}
-        outlineColor="black"
-      >
-        {data.name}
-      </Text>
+      <Billboard>
+        <Text
+          position={[0, 2.2, 0]}
+          fontSize={0.22}
+          color="white"
+          anchorX="center"
+          anchorY="bottom"
+          outlineWidth={0.02}
+          outlineColor="black"
+        >
+          {data.name}
+        </Text>
+      </Billboard>
 
       {/* Always mounted — visibility toggled imperatively in useFrame */}
       <mesh ref={indicatorRef} position={[0, 2.6, 0]} visible={false}>

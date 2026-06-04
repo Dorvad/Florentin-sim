@@ -1,6 +1,6 @@
 import { useEffect, useRef, useMemo, Suspense } from 'react'
 import { useFrame } from '@react-three/fiber'
-import { Text, useGLTF } from '@react-three/drei'
+import { Billboard, Text, useGLTF } from '@react-three/drei'
 import { Mesh, MeshStandardMaterial } from 'three'
 import type { Vector3Tuple } from 'three'
 import { useGameStore } from '@/stores/gameStore'
@@ -104,17 +104,19 @@ function ApartmentObjectMesh({ data }: { data: InteractableObjectData }) {
       )}
 
       <Suspense fallback={null}>
-        <Text
-          position={[0, h / 2 + 0.18, 0]}
-          fontSize={0.16}
-          color="#ffffffcc"
-          anchorX="center"
-          anchorY="bottom"
-          outlineWidth={0.01}
-          outlineColor="#000"
-        >
-          {data.name}
-        </Text>
+        <Billboard>
+          <Text
+            position={[0, h / 2 + 0.18, 0]}
+            fontSize={0.16}
+            color="#ffffffcc"
+            anchorX="center"
+            anchorY="bottom"
+            outlineWidth={0.01}
+            outlineColor="#000"
+          >
+            {data.name}
+          </Text>
+        </Billboard>
       </Suspense>
 
       <mesh ref={indicatorRef} position={[0, h / 2 + 0.55, 0]}>

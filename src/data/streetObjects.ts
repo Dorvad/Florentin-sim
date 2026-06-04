@@ -8,7 +8,10 @@ export const streetObjects: InteractableObjectData[] = [
   {
     id: 'home_entrance',
     name: 'Your Building',
-    position: [0, 1, 4.8],
+    // On the east sidewalk, flush against kb_e_tower_c west face (x≈11.5)
+    // rotation=-π/2 turns the south-facing door to face west (toward the road)
+    position: [11, 1, -3],
+    rotation: -Math.PI / 2,
     color: '#7B5E3A',
     size: [1, 2, 0.12],
     dialogueTreeId: 'home_entrance',
