@@ -5,13 +5,38 @@
   display: flex;
   gap: 14px;
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.38);
   pointer-events: none;
   user-select: none;
   z-index: 50;
+  align-items: center;
 }
 
-/* Hide keyboard hint on touch screens — mobile controls are visible instead */
+.hint span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  min-width: 22px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.13);
+  border-radius: 4px;
+  font-size: 10px;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+/* Hide keyboard hints on touch screens */
 @media (pointer: coarse) {
   .hint { display: none; }
 }

@@ -8,6 +8,7 @@ import { ControlsHint } from '@/components/ui/ControlsHint'
 import { MobileControls } from '@/components/ui/MobileControls'
 import { StatFeedback } from '@/components/ui/StatFeedback'
 import { QuestNotification } from '@/components/ui/QuestNotification'
+import { InteractionPrompt } from '@/components/ui/InteractionPrompt'
 import { useGameStore } from '@/stores/gameStore'
 
 export default function App() {
@@ -48,6 +49,7 @@ export default function App() {
       <StatsHUD />
       <StatFeedback />
       <QuestNotification />
+      <InteractionPrompt />
       <DialogueBox />
       <QuestLog />
       <ControlsHint />

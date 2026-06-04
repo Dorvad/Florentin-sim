@@ -1,14 +1,11 @@
 import styles from './ControlsHint.module.css'
 
-// ── ControlsHint ───────────────────────────────────────────────────────────
-// Small always-visible legend. Remove or hide once players are familiar.
-
 export function ControlsHint() {
   return (
     <div className={styles.hint}>
-      <span>WASD / ↑↓←→ Move</span>
-      <span>E Interact</span>
-      <span>Q Quest Log</span>
+      <span><kbd className={styles.key}>WASD</kbd>Move</span>
+      <span><kbd className={styles.key}>E</kbd>Interact</span>
+      <span><kbd className={styles.key}>Q</kbd>Quests</span>
     </div>
   )
 }

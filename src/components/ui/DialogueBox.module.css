@@ -12,101 +12,207 @@
 
 .box {
   pointer-events: all;
-  background: rgba(10, 8, 6, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
-  padding: 20px 24px;
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  background: rgba(8, 6, 4, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px 22px 18px 18px;
   max-width: 680px;
   width: 100%;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
+  animation: slideUp 0.18s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ── Portrait ─────────────────────────────────────────────────────────────── */
+
+.portrait {
+  display: flex;
+  align-items: flex-start;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+
+.avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08);
+}
+
+/* ── Content ──────────────────────────────────────────────────────────────── */
+
+.content {
+  flex: 1;
+  min-width: 0;
 }
 
 .speaker {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
-  color: #f5c542;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  margin-bottom: 8px;
+  letter-spacing: 0.08em;
+  margin-bottom: 6px;
+  opacity: 0.9;
 }
 
 .text {
   font-size: 15px;
-  color: #eee;
-  line-height: 1.55;
+  color: #e8e8e8;
+  line-height: 1.6;
   min-height: 44px;
 }
+
+.cursor {
+  display: inline-block;
+  animation: blink 0.65s step-end infinite;
+  color: rgba(255, 255, 255, 0.4);
+  margin-left: 1px;
+  vertical-align: text-bottom;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+/* ── Choices ──────────────────────────────────────────────────────────────── */
 
 .choices {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-top: 16px;
+  gap: 7px;
+  margin-top: 14px;
 }
 
 .choiceBtn {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
-  color: #ddd;
+  color: #d8d8d8;
   font-size: 14px;
-  /* At least 44px tall for tap targets */
-  padding: 10px 16px;
+  padding: 9px 14px 9px 10px;
   min-height: 44px;
   text-align: left;
   cursor: pointer;
-  transition: background 0.15s, border-color 0.15s;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
 }
 
 .choiceBtn:hover {
-  background: rgba(245, 197, 66, 0.18);
-  border-color: #f5c542;
+  background: rgba(245, 197, 66, 0.14);
+  border-color: rgba(245, 197, 66, 0.55);
   color: #fff;
 }
 
-.choiceBtn:active {
+.choiceBtn:hover .choiceKey {
   background: rgba(245, 197, 66, 0.25);
-  border-color: #f5c542;
+  border-color: rgba(245, 197, 66, 0.6);
+  color: #f5c542;
 }
+
+.choiceBtn:active {
+  background: rgba(245, 197, 66, 0.22);
+}
+
+.choiceKey {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.5);
+  margin-right: 11px;
+  flex-shrink: 0;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+  font-family: inherit;
+}
+
+/* ── Next / Close button ──────────────────────────────────────────────────── */
 
 .nextBtn {
-  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
   float: right;
   background: none;
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 6px;
-  color: #aaa;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 7px;
+  color: #999;
   font-size: 13px;
-  padding: 6px 14px;
-  min-height: 40px;
+  padding: 6px 12px;
+  min-height: 36px;
   cursor: pointer;
-  transition: color 0.15s, border-color 0.15s;
+  transition: color 0.12s, border-color 0.12s, background 0.12s;
 }
 
-.nextBtn:hover  { color: #fff; border-color: #fff; }
-.nextBtn:active { color: #fff; border-color: #fff; }
+.nextBtn:hover  { color: #fff; border-color: rgba(255, 255, 255, 0.45); background: rgba(255,255,255,0.05); }
+.nextBtn:active { color: #fff; }
+
+.nextKey {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 17px;
+  padding: 0 5px;
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 3px;
+  font-size: 9px;
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.35);
+  text-transform: uppercase;
+}
 
 /* ── Touch screens — push box above the control strip ────────────────────── */
 
 @media (pointer: coarse) {
   .overlay {
-    /* 200px control strip + 12px gap */
     bottom: 212px;
     padding: 12px 16px;
   }
   .box {
-    padding: 16px 18px;
+    padding: 14px 16px 14px 14px;
     max-width: 100%;
+    gap: 12px;
   }
-  .text       { font-size: 15px; min-height: 0; }
-  .choiceBtn  { font-size: 15px; padding: 12px 16px; }
-  .speaker    { font-size: 12px; }
+  .avatar      { width: 40px; height: 40px; font-size: 17px; }
+  .text        { font-size: 15px; min-height: 0; }
+  .choiceBtn   { font-size: 15px; padding: 11px 14px 11px 10px; }
+  .speaker     { font-size: 11px; }
+  .nextBtn     { font-size: 14px; }
+  .nextKey,
+  .choiceKey   { display: none; }
 }
 
-/* Landscape phone — less vertical room */
 @media (pointer: coarse) and (max-height: 500px) {
   .overlay { bottom: 172px; padding: 8px 12px; }
-  .box     { padding: 10px 14px; }
+  .box     { padding: 10px 12px; gap: 10px; }
+  .avatar  { width: 36px; height: 36px; font-size: 15px; }
   .text    { font-size: 14px; }
   .choices { gap: 6px; margin-top: 10px; }
 }
