@@ -9,6 +9,7 @@ import { MobileControls } from '@/components/ui/MobileControls'
 import { StatFeedback } from '@/components/ui/StatFeedback'
 import { QuestNotification } from '@/components/ui/QuestNotification'
 import { InteractionPrompt } from '@/components/ui/InteractionPrompt'
+import { FullscreenButton } from '@/components/ui/FullscreenButton'
 import { useGameStore } from '@/stores/gameStore'
 
 export default function App() {
@@ -53,6 +54,7 @@ export default function App() {
       <DialogueBox />
       <QuestLog />
       <ControlsHint />
+      <FullscreenButton />
       <MobileControls />
     </>
   )

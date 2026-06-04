@@ -55,8 +55,10 @@ function buildMaterial(name: string): MeshStandardMaterial {
 
   switch (name) {
     case 'MI_RedBrick':
+      return new MeshStandardMaterial({ ...redBrick(), color: new Color('#c8804a') })  // warm ochre-terracotta
+
     case 'MI_RedBrick_Pale':
-      return new MeshStandardMaterial(redBrick())
+      return new MeshStandardMaterial({ ...redBrick(), color: new Color('#d4a070') })  // warm cream-sand
 
     case 'MI_Trim':
     case 'MI_Trim_Dark':
@@ -72,7 +74,7 @@ function buildMaterial(name: string): MeshStandardMaterial {
       })
 
     case 'MI_Concrete':
-      return new MeshStandardMaterial(concrete())
+      return new MeshStandardMaterial({ ...concrete(), color: new Color('#c0a880') })  // warm sand plaster
 
     case 'MI_Asphalt':
       return new MeshStandardMaterial({

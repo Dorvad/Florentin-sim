@@ -125,6 +125,7 @@ export interface StreetPropData {
   position: Vector3Tuple
   rotation?: number
   scale?: number
+  materialColors?: Record<string, string>  // material name → hex/CSS color
 }
 
 // ── Game State ────────────────────────────────────────────────────────────────

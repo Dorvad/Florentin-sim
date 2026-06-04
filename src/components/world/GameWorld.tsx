@@ -6,6 +6,7 @@ import { streetObjects } from '@/data/streetObjects'
 import { useGameStore } from '@/stores/gameStore'
 import { Ground } from './Ground'
 import { RoadSurface } from './RoadSurface'
+import { StreetDetails } from './StreetDetails'
 import { StreetEntrance } from './StreetEntrance'
 import { Building } from './Building'
 import { StreetTile } from './StreetTile'
@@ -82,6 +83,9 @@ export function GameWorld() {
               <StreetTile key={t.id} {...t} />
             ))}
           </Suspense>
+
+          {/* Florentin neighbourhood details: graffiti, café, string lights */}
+          <StreetDetails />
 
           {/* Apartment building entrance */}
           <Suspense fallback={null}>

@@ -1,0 +1,39 @@
+.btn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  z-index: 50;
+  backdrop-filter: blur(6px);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  padding: 0;
+}
+
+.btn:hover {
+  background: rgba(0, 0, 0, 0.65);
+  border-color: rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.btn:active {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* On mobile, hide the button — fullscreen UX is handled by the browser */
+@media (pointer: coarse) {
+  .btn { display: none; }
+}

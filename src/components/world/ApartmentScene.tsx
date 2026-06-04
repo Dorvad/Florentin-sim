@@ -1,7 +1,7 @@
 import { useEffect, useRef, useMemo, Suspense } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Billboard, Text, useGLTF } from '@react-three/drei'
-import { Mesh, MeshStandardMaterial } from 'three'
+import { Mesh, MeshStandardMaterial, Color } from 'three'
 import type { Vector3Tuple } from 'three'
 import { useGameStore } from '@/stores/gameStore'
 import { apartmentObjects } from '@/data/apartment'
@@ -43,23 +43,40 @@ Object.values(FURN).forEach((p) => useGLTF.preload(p))
 // Loads and clones a GLB, preserving original atlas materials.
 // Used for all cozy-interior furniture that has its own baked texture.
 
-function ApartmentProp({ path, pos, rot = 0, scale = 1 }: {
+function ApartmentProp({ path, pos, rot = 0, scale = 1, colors }: {
   path: string
   pos: Vector3Tuple
   rot?: number
   scale?: number
+  colors?: Record<string, string>
 }) {
   const { scene } = useGLTF(path)
   const clone = useMemo(() => {
     const c = scene.clone(true)
     c.traverse((node) => {
-      if (node instanceof Mesh) {
-        node.castShadow = true
-        node.receiveShadow = true
+      if (!(node instanceof Mesh)) return
+      node.castShadow = true
+      node.receiveShadow = true
+      if (colors) {
+        if (Array.isArray(node.material)) {
+          node.material = (node.material as MeshStandardMaterial[]).map((mat) => {
+            const override = colors[mat.name]
+            if (override && mat instanceof MeshStandardMaterial) {
+              const m = mat.clone(); m.color = new Color(override); m.needsUpdate = true; return m
+            }
+            return mat
+          })
+        } else if (node.material instanceof MeshStandardMaterial) {
+          const override = colors[node.material.name]
+          if (override) {
+            const m = (node.material as MeshStandardMaterial).clone()
+            m.color = new Color(override); m.needsUpdate = true; node.material = m
+          }
+        }
       }
     })
     return c
-  }, [scene])
+  }, [scene, colors])
   return <primitive object={clone} position={pos} rotation-y={rot} scale={scale} />
 }
 
@@ -192,8 +209,9 @@ function CozyProps() {
       <ApartmentProp path={FURN.book7}      pos={[1.25, 0.52, 0.6]} />
 
       {/* ── Big plant — northeast corner near window ───────────────────── */}
-      {/* Plant_1_Big native h=3.76 → scale 0.45 ≈ 1.7 m tall */}
-      <ApartmentProp path={FURN.plant} pos={[2.8, 0, -2.8]} rot={-Math.PI / 4} scale={0.45} />
+      {/* Plant_1_Big native h=3.76 → scale 0.45 ≈ 1.7 m tall; 'Leaves' mat → rich green */}
+      <ApartmentProp path={FURN.plant} pos={[2.8, 0, -2.8]} rot={-Math.PI / 4} scale={0.45}
+        colors={{ 'Leaves': '#3a7a28' }} />
     </>
   )
 }
