@@ -35,6 +35,7 @@ const FURN = {
   bookStack1:    '/assets/models/furniture/Book_Stack_1.glb',
   bookStack2:    '/assets/models/furniture/Book_Stack_2.glb',
   book7:         '/assets/models/furniture/Book_7.glb',
+  plant:         '/assets/models/nature/Plant_1_Big.glb',
 }
 Object.values(FURN).forEach((p) => useGLTF.preload(p))
 
@@ -42,10 +43,11 @@ Object.values(FURN).forEach((p) => useGLTF.preload(p))
 // Loads and clones a GLB, preserving original atlas materials.
 // Used for all cozy-interior furniture that has its own baked texture.
 
-function ApartmentProp({ path, pos, rot = 0 }: {
+function ApartmentProp({ path, pos, rot = 0, scale = 1 }: {
   path: string
   pos: Vector3Tuple
   rot?: number
+  scale?: number
 }) {
   const { scene } = useGLTF(path)
   const clone = useMemo(() => {
@@ -58,7 +60,7 @@ function ApartmentProp({ path, pos, rot = 0 }: {
     })
     return c
   }, [scene])
-  return <primitive object={clone} position={pos} rotation-y={rot} />
+  return <primitive object={clone} position={pos} rotation-y={rot} scale={scale} />
 }
 
 // ── InteractableModel ──────────────────────────────────────────────────────
@@ -188,6 +190,10 @@ function CozyProps() {
 
       {/* ── Single book on nightstand ───────────────────────────────────── */}
       <ApartmentProp path={FURN.book7}      pos={[1.25, 0.52, 0.6]} />
+
+      {/* ── Big plant — northeast corner near window ───────────────────── */}
+      {/* Plant_1_Big native h=3.76 → scale 0.45 ≈ 1.7 m tall */}
+      <ApartmentProp path={FURN.plant} pos={[2.8, 0, -2.8]} rot={-Math.PI / 4} scale={0.45} />
     </>
   )
 }
@@ -311,8 +317,8 @@ export function ApartmentScene() {
     if (!activeDialogue) openDialogue('wakeup_narration', '')
   }, [])
 
-  const wallCol  = '#d8ccb8'   // warm off-white plaster
-  const floorCol = '#a8967a'   // worn wood / terracotta tile look
+  const wallCol  = '#e2d8c8'   // warm off-white Mediterranean plaster
+  const floorCol = '#b89870'   // warm terracotta tile
 
   return (
     <>

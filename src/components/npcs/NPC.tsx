@@ -1,7 +1,8 @@
-import { useEffect, useRef, Suspense } from 'react'
+import { useEffect, useRef, useMemo, Suspense } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Billboard, Text, useGLTF, useAnimations } from '@react-three/drei'
 import { Mesh, MeshStandardMaterial, SkinnedMesh } from 'three'
+import { SkeletonUtils } from 'three-stdlib'
 import type { Group } from 'three'
 import type { MutableRefObject } from 'react'
 import type { NPCData } from '@/types'
@@ -63,11 +64,10 @@ function NPCModel({
 }) {
   const groupRef = useRef<Group>(null)
   const { scene, animations } = useGLTF(modelPath)
-  const { actions } = useAnimations(animations, groupRef)
-  const currentAnimRef = useRef<'idle' | 'walk' | null>(null)
-
-  useEffect(() => {
-    scene.traverse((node) => {
+  // Clone so multiple NPCs sharing the same model path get independent scene graphs
+  const clone = useMemo(() => {
+    const c = SkeletonUtils.clone(scene)
+    c.traverse((node) => {
       if (!(node instanceof Mesh) && !(node instanceof SkinnedMesh)) return
       node.castShadow = true
       const mats = Array.isArray(node.material) ? node.material : [node.material]
@@ -79,7 +79,10 @@ function NPCModel({
         }
       })
     })
+    return c
   }, [scene])
+  const { actions } = useAnimations(animations, groupRef)
+  const currentAnimRef = useRef<'idle' | 'walk' | null>(null)
 
   useEffect(() => {
     for (const name of IDLE_ANIM_NAMES) {
@@ -116,7 +119,7 @@ function NPCModel({
 
   return (
     <group ref={groupRef}>
-      <primitive object={scene} scale={modelScale} position={[0, FEET_OFFSET, 0]} castShadow />
+      <primitive object={clone} scale={modelScale} position={[0, FEET_OFFSET, 0]} castShadow />
     </group>
   )
 }

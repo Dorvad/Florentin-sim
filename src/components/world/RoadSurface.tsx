@@ -2,16 +2,19 @@
 // Replaces the old Kenney modular street tiles with a single flat pavement.
 // Road: 6 m wide, centred on x=0.  Sidewalks: 8 m wide each side.
 // Curbs are raised 3D boxes.  Centre line = white dashes every ~4.5 m.
+// Green planting strip (x≈9–11 both sides) sits between sidewalk & buildings.
 
 const ROAD_Z     = -24   // world-z at the centre of the street length
 const ROAD_LEN   = 66    // total z length (covers z=+9 → z=-57)
 const ROAD_W     = 6     // road width  (x = -3 … +3)
-const SW_W       = 8     // sidewalk width each side
+const SW_W       = 8     // sidewalk width each side (x = 3…11 east, -3…-11 west)
+const STRIP_W    = 2     // green planting strip width each side
 
-const ASPHALT  = '#2a2a2a'
-const CONCRETE = '#b8b0a4'
-const CURB     = '#888070'
-const MARKING  = '#e4e4cc'
+const ASPHALT  = '#252525'
+const CONCRETE = '#c2b9ae'
+const CURB     = '#8a7f72'
+const MARKING  = '#e8e8d0'
+const GRASS    = '#4e7030'
 
 const DASH_COUNT   = 14
 const DASH_SPACING = ROAD_LEN / DASH_COUNT
@@ -75,6 +78,18 @@ export function RoadSurface() {
           <meshStandardMaterial color={MARKING} roughness={0.5} />
         </mesh>
       ))}
+
+      {/* ── Green planting strips — between sidewalk outer edge and buildings ─ */}
+      {/* East: x = 11 … 13 (SW outer edge=11, buildings start ~13) */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[ROAD_W / 2 + SW_W + STRIP_W / 2, 0.012, ROAD_Z]} receiveShadow>
+        <planeGeometry args={[STRIP_W, ROAD_LEN]} />
+        <meshStandardMaterial color={GRASS} roughness={0.98} />
+      </mesh>
+      {/* West: x = -11 … -13 */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-(ROAD_W / 2 + SW_W + STRIP_W / 2), 0.012, ROAD_Z]} receiveShadow>
+        <planeGeometry args={[STRIP_W, ROAD_LEN]} />
+        <meshStandardMaterial color={GRASS} roughness={0.98} />
+      </mesh>
     </>
   )
 }

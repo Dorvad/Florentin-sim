@@ -100,6 +100,26 @@ export const streetProps: StreetPropData[] = [
   { id: 'ac_w_td_2', modelPath: '/assets/models/retro/detail-ac-b.glb', position: [-14.2, 33.9, -2.8], scale: 8 },
   // kb_w_tower_b (scale=10, native h=1.888 → roof y=18.9)
   { id: 'ac_w_tb_1', modelPath: '/assets/models/retro/detail-ac-a.glb', position: [-15.5, 18.9, -26.5], scale: 7 },
+
+  // ── Nature — east sidewalk outer edge (x≈9.5–10.5) ───────────────────────
+  // Trees: CommonTree ~7.6 m native → scale 1
+  { id: 'nat_tree_e_0', modelPath: '/assets/models/nature/CommonTree_2.glb', position: [10.0, 0,   1.5], scale: 1   },
+  { id: 'nat_tree_e_1', modelPath: '/assets/models/nature/CommonTree_2.glb', position: [10.2, 0, -20.0], scale: 1   },
+  // Bushes: Bush_Common ~1.6 m native → scale 0.8 ≈ 1.25 m
+  { id: 'nat_bush_e_0', modelPath: '/assets/models/nature/Bush_Common_Flowers.glb', position: [10.0, 0,  -7.5], scale: 0.8 },
+  { id: 'nat_bush_e_1', modelPath: '/assets/models/nature/Bush_Common.glb',         position: [10.2, 0, -33.0], scale: 0.8 },
+  // Flower cluster: ~2 m native → scale 0.35 ≈ 0.7 m compact patch
+  { id: 'nat_flower_e_0', modelPath: '/assets/models/nature/Flower_3_Group.glb', position: [10.6, 0, -12.5], scale: 0.35 },
+  // Rock near south end
+  { id: 'nat_rock_e_0', modelPath: '/assets/models/nature/Rock_Medium_1.glb', position: [10.8, 0, -47.0], scale: 0.35 },
+
+  // ── Nature — west sidewalk outer edge (x≈-9.5 to -10.5) ─────────────────
+  { id: 'nat_tree_w_0', modelPath: '/assets/models/nature/Pine_1.glb',          position: [-10.0, 0,  -6.0], scale: 1   },
+  { id: 'nat_tree_w_1', modelPath: '/assets/models/nature/CommonTree_3.glb',     position: [-10.2, 0, -28.0], scale: 1   },
+  { id: 'nat_bush_w_0', modelPath: '/assets/models/nature/Bush_Common.glb',         position: [-10.0, 0,  -0.5], scale: 0.8 },
+  { id: 'nat_bush_w_1', modelPath: '/assets/models/nature/Bush_Common_Flowers.glb', position: [-10.2, 0, -20.0], scale: 0.8 },
+  { id: 'nat_flower_w_0', modelPath: '/assets/models/nature/Flower_3_Group.glb', position: [-10.6, 0, -14.0], scale: 0.35 },
+  { id: 'nat_rock_w_0', modelPath: '/assets/models/nature/Rock_Medium_2.glb', position: [-10.8, 0, -42.0], scale: 0.35 },
 ]
 
 // ── Buildings ──────────────────────────────────────────────────────────────

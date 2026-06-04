@@ -8,7 +8,8 @@ export function Ground() {
   return (
     <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
       <planeGeometry args={[GROUND_SIZE, GROUND_SIZE]} />
-      <meshStandardMaterial color="#6b6050" roughness={0.95} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
+      {/* Urban soil/dried grass — realistic for a Tel Aviv side street */}
+      <meshStandardMaterial color="#5a6e3a" roughness={0.97} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
     </mesh>
   )
 }

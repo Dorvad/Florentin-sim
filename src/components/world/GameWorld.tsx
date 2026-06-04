@@ -45,10 +45,11 @@ export function GameWorld() {
   return (
     <>
       {/* ── Lighting ────────────────────────────────────────────────────── */}
-      <ambientLight intensity={isApartment ? 1.0 : 0.55} />
+      <ambientLight intensity={isApartment ? 1.0 : 0.65} color={isApartment ? '#ffffff' : '#ffeedd'} />
       <directionalLight
-        position={[10, 20, 10]}
-        intensity={isApartment ? 0.5 : 1.2}
+        position={[8, 18, -10]}
+        intensity={isApartment ? 0.5 : 1.4}
+        color={isApartment ? '#ffffff' : '#ffe8c8'}
         castShadow
         shadow-mapSize={[2048, 2048]}
         shadow-camera-near={0.5}
@@ -63,8 +64,8 @@ export function GameWorld() {
         <pointLight position={[0, 2.5, 0]} intensity={0.6} color="#ffe4b5" distance={10} />
       )}
 
-      {/* ── Sky (always present — shows through apartment opening) ────────── */}
-      <Sky sunPosition={[10, 5, 10]} turbidity={6} rayleigh={0.5} />
+      {/* ── Sky — warm Tel Aviv late-afternoon light ────────────────────── */}
+      <Sky sunPosition={[8, 3, -10]} turbidity={4} rayleigh={0.8} mieCoefficient={0.005} mieDirectionalG={0.8} />
 
       {/* ── Scene switch ────────────────────────────────────────────────── */}
       {isApartment ? (
