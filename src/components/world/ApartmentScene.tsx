@@ -29,6 +29,15 @@ const COZY = {
 }
 Object.values(COZY).forEach((p) => useGLTF.preload(p))
 
+const FURN = {
+  bookcase:      '/assets/models/furniture/Bookcase_2.glb',
+  bookGroup:     '/assets/models/furniture/BookGroup_Medium_1.glb',
+  bookStack1:    '/assets/models/furniture/Book_Stack_1.glb',
+  bookStack2:    '/assets/models/furniture/Book_Stack_2.glb',
+  book7:         '/assets/models/furniture/Book_7.glb',
+}
+Object.values(FURN).forEach((p) => useGLTF.preload(p))
+
 // ── ApartmentProp ──────────────────────────────────────────────────────────
 // Loads and clones a GLB, preserving original atlas materials.
 // Used for all cozy-interior furniture that has its own baked texture.
@@ -57,7 +66,7 @@ function ApartmentProp({ path, pos, rot = 0 }: {
 // The group parent is centered at data.position, so we shift down by half the
 // object height so the model's y=0 origin lands on the floor.
 
-function InteractableModel({ modelPath, halfH }: { modelPath: string; halfH: number }) {
+function InteractableModel({ modelPath, halfH, modelScale = 4 }: { modelPath: string; halfH: number; modelScale?: number }) {
   const { scene } = useGLTF(modelPath)
   const clone = useMemo(() => {
     const c = scene.clone(true)
@@ -72,7 +81,7 @@ function InteractableModel({ modelPath, halfH }: { modelPath: string; halfH: num
     })
     return c
   }, [scene])
-  return <primitive object={clone} position={[0, -halfH, 0]} scale={4} />
+  return <primitive object={clone} position={[0, -halfH, 0]} scale={modelScale} />
 }
 
 // ── ApartmentObject ────────────────────────────────────────────────────────
@@ -94,7 +103,7 @@ function ApartmentObjectMesh({ data }: { data: InteractableObjectData }) {
     <group position={data.position}>
       {data.modelPath ? (
         <Suspense fallback={null}>
-          <InteractableModel modelPath={data.modelPath} halfH={h / 2} />
+          <InteractableModel modelPath={data.modelPath} halfH={h / 2} modelScale={data.modelScale} />
         </Suspense>
       ) : (
         <mesh castShadow receiveShadow>
@@ -141,8 +150,8 @@ function ApartmentObjectMesh({ data }: { data: InteractableObjectData }) {
 function CozyProps() {
   return (
     <>
-      {/* ── Nightstand — east side of mattress head ──────────────────────── */}
-      <ApartmentProp path={COZY.nightstand} pos={[1.25, 0, 1.45]} />
+      {/* ── Nightstand — east of bed head (bed at z=1.8, head at z≈0.6) ─── */}
+      <ApartmentProp path={COZY.nightstand} pos={[1.25, 0, 0.8]} />
 
       {/* ── Kitchen/work table — northwest, clear of fridge ─────────────── */}
       <ApartmentProp path={COZY.table} pos={[-2.0, 0, -0.4]} />
@@ -150,14 +159,14 @@ function CozyProps() {
       {/* ── Chair pulled up to table from south, facing north ───────────── */}
       <ApartmentProp path={COZY.chair} pos={[-2.0, 0, 0.7]} rot={Math.PI} />
 
-      {/* ── Coffee table — center of room, between kitchen and bed ─────── */}
+      {/* ── Coffee table — center of room ───────────────────────────────── */}
       <ApartmentProp path={COZY.coffeeTable} pos={[0, 0, 0.5]} />
 
-      {/* ── Floor lamp — northeast corner near sleeping area ─────────────── */}
+      {/* ── Floor lamp — northeast corner ───────────────────────────────── */}
       <ApartmentProp path={COZY.floorLamp} pos={[2.2, 0, 0.5]} />
 
-      {/* ── Square rug — under mattress ─────────────────────────────────── */}
-      <ApartmentProp path={COZY.squareRug} pos={[0, 0.015, 2]} />
+      {/* ── Square rug — under bed ──────────────────────────────────────── */}
+      <ApartmentProp path={COZY.squareRug} pos={[0, 0.015, 1.8]} />
 
       {/* ── Wall lamps — north wall, flanking the window ────────────────── */}
       <ApartmentProp path={COZY.wallLamp} pos={[-2.2, 1.72, -3.95]} rot={Math.PI} />
@@ -165,6 +174,20 @@ function CozyProps() {
 
       {/* ── Decorative wall mirror — north wall, east of window ─────────── */}
       <ApartmentProp path={COZY.wallMirror} pos={[3.0, 1.1, -3.91]} rot={Math.PI} />
+
+      {/* ── Bookcase — against west wall, shelves facing east ───────────── */}
+      {/* rot=π/2 maps model-Z→world-X so back (z+) rests against wall x=-3.94 */}
+      <ApartmentProp path={FURN.bookcase}   pos={[-3.726, 0, -0.5]} rot={Math.PI / 2} />
+
+      {/* ── Book group — floor beside bookcase ──────────────────────────── */}
+      <ApartmentProp path={FURN.bookGroup}  pos={[-3.3, 0.01, 0.5]} />
+
+      {/* ── Book stacks — coffee table and floor ────────────────────────── */}
+      <ApartmentProp path={FURN.bookStack1} pos={[0.3, 0.47, 0.45]} />
+      <ApartmentProp path={FURN.bookStack2} pos={[1.1, 0.01, -0.7]} />
+
+      {/* ── Single book on nightstand ───────────────────────────────────── */}
+      <ApartmentProp path={FURN.book7}      pos={[1.25, 0.52, 0.6]} />
     </>
   )
 }
@@ -232,15 +255,14 @@ function RoomProps() {
         <meshStandardMaterial color="#b0b0b0" metalness={0.6} roughness={0.3} />
       </mesh>
 
-      {/* Pillow — resting on the mattress head end */}
-      {/* Mattress top y = 0.15+0.15 = 0.30; pillow bottom at 0.30 → center y=0.37 */}
-      <mesh position={[0, 0.37, 1.5]} rotation={[0, 0.05, 0]} castShadow>
+      {/* Pillow — bed head end (Bed_Twin1 top at y=0.806, center y=0.876) */}
+      <mesh position={[0, 0.876, 0.9]} rotation={[0, 0.05, 0]} castShadow>
         <boxGeometry args={[0.75, 0.14, 0.48]} />
         <meshStandardMaterial color="#e8ddd0" roughness={0.9} />
       </mesh>
 
-      {/* Rumpled blanket near the foot of the mattress */}
-      <mesh position={[0.2, 0.36, 2.25]} rotation={[0.15, 0.12, 0.08]} castShadow>
+      {/* Rumpled blanket — foot of bed */}
+      <mesh position={[0.2, 0.876, 2.6]} rotation={[0.15, 0.12, 0.08]} castShadow>
         <boxGeometry args={[1.3, 0.12, 0.65]} />
         <meshStandardMaterial color="#9b87a3" roughness={1.0} />
       </mesh>
@@ -269,13 +291,7 @@ function RoomProps() {
         </mesh>
       </group>
 
-      {/* Small stack of books on the floor beside the coffee table */}
-      {[0, 0.04, 0.08].map((yOff, i) => (
-        <mesh key={i} position={[0.55, 0.02 + yOff, 0.45]} rotation={[0, i * 0.15, 0]} castShadow>
-          <boxGeometry args={[0.20, 0.03, 0.27]} />
-          <meshStandardMaterial color={['#c47a45', '#5a7ab8', '#7ab85a'][i]} roughness={0.8} />
-        </mesh>
-      ))}
+      {/* Books on coffee table and floor are now GLB models in CozyProps */}
     </>
   )
 }

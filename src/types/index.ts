@@ -71,6 +71,7 @@ export interface InteractableObjectData {
   size: Vector3Tuple
   dialogueTreeId: string
   modelPath?: string   // optional GLB to render instead of the default colored box
+  modelScale?: number  // scale override for the GLB (default 4 for door-sized models; use 1 for real-metre models)
   rotation?: number    // optional Y-axis rotation in radians
 }
 

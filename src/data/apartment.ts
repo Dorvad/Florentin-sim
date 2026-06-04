@@ -8,10 +8,13 @@ export const apartmentObjects: InteractableObjectData[] = [
   {
     id: 'mattress',
     name: 'Mattress',
-    position: [0, 0.15, 2],
+    // y = h/2 = 0.403 so the model's y=0 sits flush on the floor
+    position: [0, 0.403, 1.8],
     color: '#8B7D7B',
-    size: [2, 0.3, 1.2],
+    size: [1.876, 0.806, 2.412],   // actual Bed_Twin1 dimensions (metres)
     dialogueTreeId: 'mattress',
+    modelPath: '/assets/models/furniture/Bed_Twin1.glb',
+    modelScale: 1,
   },
   {
     id: 'fridge',

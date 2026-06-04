@@ -83,7 +83,7 @@ export function resolveCollisions(px: number, pz: number): [number, number] {
 
 const APARTMENT_FURNITURE: Box[] = [
   { cx: -2.5, cz: -2.0, hw: 0.33, hd: 0.33 }, // fridge (0.65×0.65)
-  { cx:  0.0, cz:  2.0, hw: 1.0,  hd: 0.6  }, // mattress (2×1.2)
+  { cx:  0.0, cz:  1.8, hw: 1.0,  hd: 1.25 }, // Bed_Twin1 (1.876×2.412 → moved to z=1.8)
   { cx: -2.0, cz:  0.8, hw: 0.4,  hd: 0.4  }, // work table (approx)
 ]
 

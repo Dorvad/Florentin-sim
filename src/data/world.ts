@@ -53,6 +53,8 @@ export const streetProps: StreetPropData[] = [
   // ── Benches ───────────────────────────────────────────────────────────────
   { id: 'bench_e_0', modelPath: '/assets/models/retro/detail-bench.glb', position: [7.0, 0,  -5],  rotation: -Math.PI / 2, scale: 1.5 },
   { id: 'bench_w_0', modelPath: '/assets/models/retro/detail-bench.glb', position: [-7.0, 0, -18], rotation:  Math.PI / 2, scale: 1.5 },
+  // Real-metre bench on east sidewalk near the building entrance
+  { id: 'bench_e_new', modelPath: '/assets/models/furniture/Bench.glb', position: [8.0, 0, -1.0], rotation: -Math.PI / 2, scale: 1 },
 
   // ── Trees ─────────────────────────────────────────────────────────────────
   { id: 'tree_e_0', modelPath: '/assets/models/retro/tree-large.glb', position: [7.8, 0, -11], scale: 3 },
