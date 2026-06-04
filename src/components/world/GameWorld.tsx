@@ -32,6 +32,10 @@ uniqueStreetPaths.forEach((p) => useGLTF.preload(p))
 const uniquePropPaths = [...new Set(streetProps.map((p) => p.modelPath))]
 uniquePropPaths.forEach((p) => useGLTF.preload(p))
 
+// Preload street-detail models (bauhaus, coca-cola) explicitly
+useGLTF.preload('/assets/models/street/bauhaus.glb')
+useGLTF.preload('/assets/models/street/coca_cola.glb')
+
 // ── GameWorld ──────────────────────────────────────────────────────────────
 
 export function GameWorld() {

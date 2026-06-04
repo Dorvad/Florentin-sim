@@ -69,12 +69,23 @@ export const streetProps: StreetPropData[] = [
   // ── Kenney Modular Buildings — east side ──────────────────────────────────
   // scale=10 → ~11 m footprint; rot=π turns the façade to face the street west.
   { id: 'kb_e_tower_c', modelPath: '/assets/models/buildings/building-sample-tower-c.glb', position: [16, 0, -5],  rotation: Math.PI, scale: 10 },
-  { id: 'kb_e_house_b', modelPath: '/assets/models/buildings/building-sample-house-b.glb', position: [16, 0, -17], rotation: Math.PI, scale: 10 },
+  // kb_e_house_b replaced by Bauhaus building below
   { id: 'kb_e_tower_a', modelPath: '/assets/models/buildings/building-sample-tower-a.glb', position: [16, 0, -38], rotation: Math.PI, scale: 9  },
+
+  // ── Bauhaus residential building — east side, z=-17 to z=-30 ─────────────
+  // Authentic Tel Aviv Bauhaus style: white plaster, balconies, railing.
+  // Native ~2.2×2.5m → scale=7 gives ~15m tall, 15m wide.
+  { id: 'bauhaus_e', modelPath: '/assets/models/street/bauhaus.glb', position: [12, 0, -22],
+    rotation: Math.PI, scale: 7,
+    materialColors: { 'Material': '#f2ece0', 'wire_006135006': '#e0dcd4', 'MetalBars': '#b0a8a0' } },
 
   // ── Kenney Modular Buildings — west side ──────────────────────────────────
   { id: 'kb_w_tower_d', modelPath: '/assets/models/buildings/building-sample-tower-d.glb', position: [-13, 0, -2],  scale: 9  },
   { id: 'kb_w_tower_b', modelPath: '/assets/models/buildings/building-sample-tower-b.glb', position: [-16, 0, -27], scale: 10 },
+
+  // ── Coca-Cola display prop — near café, east sidewalk ────────────────────
+  // scale=0.3 → display bottle ~1.6 m tall; 'Floor' node hidden by scale
+  { id: 'coca_cola_e', modelPath: '/assets/models/street/coca_cola.glb', position: [10.5, 0, -9.5], scale: 0.3 },
 
   // ── South terminus — closes the street visually ───────────────────────────
   { id: 'kb_e_house_a', modelPath: '/assets/models/buildings/building-sample-house-a.glb', position: [16, 0, -50], rotation: Math.PI, scale: 10 },

@@ -1,3 +1,6 @@
+import { useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import type { Mesh } from 'three'
 import type { Vector3Tuple } from 'three'
 
 // ── StreetDetails ─────────────────────────────────────────────────────────
@@ -210,6 +213,145 @@ function StringLight({ z }: { z: number }) {
   )
 }
 
+// ── Tel Aviv Stray Cat ─────────────────────────────────────────────────────
+// Low-poly sitting cat — an iconic feature of Tel Aviv streets.
+// The tail and head do a gentle idle sway via useFrame.
+
+function StreetCat({ pos, rotY = 0, color = '#c87840' }: {
+  pos: Vector3Tuple; rotY?: number; color?: string
+}) {
+  const tailRef = useRef<Mesh>(null)
+  const headRef = useRef<Mesh>(null)
+
+  useFrame(({ clock }) => {
+    const t = clock.getElapsedTime()
+    if (tailRef.current) tailRef.current.rotation.z = Math.sin(t * 0.8) * 0.18
+    if (headRef.current) headRef.current.rotation.y = Math.sin(t * 0.5) * 0.12
+  })
+
+  const fur = color
+  const dark = '#3a2010'
+
+  return (
+    <group position={pos} rotation-y={rotY}>
+      {/* Body — rounded-ish box, sitting upright */}
+      <mesh position={[0, 0.18, 0]} castShadow>
+        <boxGeometry args={[0.22, 0.32, 0.28]} />
+        <meshStandardMaterial color={fur} roughness={0.95} />
+      </mesh>
+
+      {/* Head */}
+      <mesh ref={headRef} position={[0, 0.44, 0.06]} castShadow>
+        <boxGeometry args={[0.18, 0.18, 0.17]} />
+        <meshStandardMaterial color={fur} roughness={0.95} />
+      </mesh>
+
+      {/* Left ear */}
+      <mesh position={[-0.05, 0.56, 0.06]} rotation={[0, 0, 0.35]} castShadow>
+        <boxGeometry args={[0.05, 0.09, 0.04]} />
+        <meshStandardMaterial color={fur} roughness={0.95} />
+      </mesh>
+      {/* Right ear */}
+      <mesh position={[0.05, 0.56, 0.06]} rotation={[0, 0, -0.35]} castShadow>
+        <boxGeometry args={[0.05, 0.09, 0.04]} />
+        <meshStandardMaterial color={fur} roughness={0.95} />
+      </mesh>
+
+      {/* Eyes — tiny dark spheres */}
+      <mesh position={[-0.05, 0.46, 0.145]}>
+        <sphereGeometry args={[0.018, 6, 6]} />
+        <meshStandardMaterial color={dark} roughness={0.5} />
+      </mesh>
+      <mesh position={[0.05, 0.46, 0.145]}>
+        <sphereGeometry args={[0.018, 6, 6]} />
+        <meshStandardMaterial color={dark} roughness={0.5} />
+      </mesh>
+
+      {/* Front paws */}
+      <mesh position={[-0.07, 0.04, 0.10]} castShadow>
+        <boxGeometry args={[0.06, 0.08, 0.10]} />
+        <meshStandardMaterial color={fur} roughness={0.95} />
+      </mesh>
+      <mesh position={[0.07, 0.04, 0.10]} castShadow>
+        <boxGeometry args={[0.06, 0.08, 0.10]} />
+        <meshStandardMaterial color={fur} roughness={0.95} />
+      </mesh>
+
+      {/* Tail — angled up and slightly to the right */}
+      <mesh ref={tailRef} position={[0.12, 0.28, -0.18]} rotation={[0.5, 0, 0.6]} castShadow>
+        <boxGeometry args={[0.04, 0.22, 0.04]} />
+        <meshStandardMaterial color={fur} roughness={0.95} />
+      </mesh>
+
+      {/* Stripe markings (darker) — optional tabby */}
+      <mesh position={[0, 0.22, 0.141]} rotation={[0, 0, 0]}>
+        <boxGeometry args={[0.12, 0.04, 0.005]} />
+        <meshStandardMaterial color={dark} roughness={1} />
+      </mesh>
+      <mesh position={[0, 0.30, 0.141]}>
+        <boxGeometry args={[0.12, 0.02, 0.005]} />
+        <meshStandardMaterial color={dark} roughness={1} />
+      </mesh>
+    </group>
+  )
+}
+
+// ── Street Kiosk ───────────────────────────────────────────────────────────
+// A small stand-up street booth: newspaper / lottery kiosk.
+// Based on the uploaded "booth" (alfamidi.skp) which we couldn't convert.
+
+function StreetKiosk({ pos, rotY = 0 }: { pos: Vector3Tuple; rotY?: number }) {
+  return (
+    <group position={pos} rotation-y={rotY}>
+      {/* Main body */}
+      <mesh position={[0, 1.1, 0]} castShadow receiveShadow>
+        <boxGeometry args={[1.6, 2.2, 1.0]} />
+        <meshStandardMaterial color="#e8d8c0" roughness={0.85} />
+      </mesh>
+
+      {/* Roof — flat overhang */}
+      <mesh position={[0, 2.3, 0.2]} castShadow>
+        <boxGeometry args={[2.0, 0.08, 1.5]} />
+        <meshStandardMaterial color="#c84030" roughness={0.85} />
+      </mesh>
+
+      {/* Front window opening (dark interior box) */}
+      <mesh position={[0, 1.1, 0.51]}>
+        <boxGeometry args={[1.0, 0.9, 0.02]} />
+        <meshStandardMaterial color="#1a120c" roughness={0.9} />
+      </mesh>
+
+      {/* Front lower shelf/counter */}
+      <mesh position={[0, 0.65, 0.55]} castShadow>
+        <boxGeometry args={[1.2, 0.08, 0.28]} />
+        <meshStandardMaterial color="#c0a880" roughness={0.8} />
+      </mesh>
+
+      {/* Side sign panel */}
+      <mesh position={[0.81, 1.4, 0]} rotation={[0, Math.PI / 2, 0]}>
+        <boxGeometry args={[1.0, 0.8, 0.02]} />
+        <meshStandardMaterial color="#e03820" roughness={0.8} />
+      </mesh>
+
+      {/* Colorful magazine panels (front) */}
+      {([-0.28, 0, 0.28] as number[]).map((x, i) => (
+        <mesh key={i} position={[x, 1.15, 0.52]}>
+          <boxGeometry args={[0.22, 0.28, 0.005]} />
+          <meshStandardMaterial color={['#f0c030', '#3080e0', '#e03040'][i]} roughness={0.6} />
+        </mesh>
+      ))}
+
+      {/* Support legs */}
+      {([-0.65, 0.65] as number[]).map((x, i) => (
+        <mesh key={i} position={[x, 0.2, 0]} castShadow>
+          <boxGeometry args={[0.08, 0.4, 0.08]} />
+          <meshStandardMaterial color="#7a6050" roughness={0.9} />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
 // ── StreetDetails ──────────────────────────────────────────────────────────
 
 export function StreetDetails() {
@@ -219,6 +361,14 @@ export function StreetDetails() {
       <CafeZone />
       <StringLight z={-9} />
       <StringLight z={-16} />
+
+      {/* Tel Aviv stray cats — iconic neighbourhood character */}
+      <StreetCat pos={[7.5, 0, -1.5]} rotY={0.4} color="#c87840" />
+      <StreetCat pos={[-5.8, 0.01, -14.5]} rotY={Math.PI + 0.3} color="#888880" />
+      <StreetCat pos={[9.2, 0, -18.0]} rotY={-0.8} color="#e0c0a0" />
+
+      {/* Street kiosk / newsstand — west side */}
+      <StreetKiosk pos={[-8.5, 0, -22]} rotY={Math.PI / 2} />
     </>
   )
 }

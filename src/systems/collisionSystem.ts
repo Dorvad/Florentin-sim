@@ -16,7 +16,8 @@ const BOXES: Box[] = [
 
   // ── Kenney modular buildings (approximate at scale=9–10) ────────────────
   { cx:  16, cz:  -5, hw: 4.5, hd: 4.5 }, // kb_e_tower_c
-  { cx:  16, cz: -17, hw: 5.0, hd: 4.0 }, // kb_e_house_b
+  // kb_e_house_b replaced by Bauhaus — collision now from Bauhaus footprint
+  { cx:  12, cz: -22, hw: 7.5, hd: 5.5 }, // bauhaus_e (scale=7, ~15m wide, 11m deep)
   { cx:  16, cz: -38, hw: 4.5, hd: 4.5 }, // kb_e_tower_a
   { cx: -13, cz:  -2, hw: 4.5, hd: 4.5 }, // kb_w_tower_d
   { cx: -16, cz: -27, hw: 5.0, hd: 5.0 }, // kb_w_tower_b
