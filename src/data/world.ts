@@ -38,7 +38,7 @@ export const streetProps: StreetPropData[] = [
   // ── Parked cars – west curb (x=-4.5, facing road) ────────────────────────
   { id: 'car_w_hatch',   modelPath: '/assets/models/car_hatchback.glb',    position: [-4.5, 0,  -8], rotation:  Math.PI / 2 },
   { id: 'car_w_sport',   modelPath: '/assets/models/car_sedan_sports.glb', position: [-4.5, 0, -20], rotation:  Math.PI / 2 },
-  { id: 'car_w_suv',     modelPath: '/assets/models/car_suv.glb',          position: [-4.5, 0, -36], rotation:  Math.PI / 2 },
+  { id: 'car_w_suv',     modelPath: '/assets/models/car_suv.glb',          position: [-4.5, 0, -32], rotation:  Math.PI / 2 },
 
   // ── Street lamps ─────────────────────────────────────────────────────────
   { id: 'lamp_e_0', modelPath: '/assets/models/retro/detail-light-single.glb', position: [6.8, 0,  -8], scale: 5 },
@@ -52,14 +52,14 @@ export const streetProps: StreetPropData[] = [
 
   // ── Benches ───────────────────────────────────────────────────────────────
   { id: 'bench_e_0', modelPath: '/assets/models/retro/detail-bench.glb', position: [7.0, 0,  -5],  rotation: -Math.PI / 2, scale: 1.5 },
-  { id: 'bench_w_0', modelPath: '/assets/models/retro/detail-bench.glb', position: [-7.0, 0, -18], rotation:  Math.PI / 2, scale: 1.5 },
+  { id: 'bench_w_0', modelPath: '/assets/models/retro/detail-bench.glb', position: [-7.0, 0,  -5], rotation:  Math.PI / 2, scale: 1.5 },
   // Real-metre bench on east sidewalk near the building entrance
   { id: 'bench_e_new', modelPath: '/assets/models/furniture/Bench.glb', position: [8.0, 0, -1.0], rotation: -Math.PI / 2, scale: 1 },
 
   // ── Trees ─────────────────────────────────────────────────────────────────
   { id: 'tree_e_0', modelPath: '/assets/models/retro/tree-large.glb', position: [7.8, 0, -11], scale: 3 },
   { id: 'tree_e_1', modelPath: '/assets/models/retro/tree-large.glb', position: [7.8, 0, -28], scale: 3 },
-  { id: 'tree_w_0', modelPath: '/assets/models/retro/tree-large.glb', position: [-7.8, 0,  -5], scale: 3 },
+  { id: 'tree_w_0', modelPath: '/assets/models/retro/tree-large.glb', position: [-7.8, 0, -11], scale: 3 },
   { id: 'tree_w_1', modelPath: '/assets/models/retro/tree-small.glb', position: [-7.8, 0, -28], scale: 4 },
 
   // ── Dumpsters (corner / alley vibes) ─────────────────────────────────────
@@ -75,7 +75,7 @@ export const streetProps: StreetPropData[] = [
   // ── Bauhaus residential building — east side, z=-17 to z=-30 ─────────────
   // Authentic Tel Aviv Bauhaus style: white plaster, balconies, railing.
   // Native ~2.2×2.5m → scale=7 gives ~15m tall, 15m wide.
-  { id: 'bauhaus_e', modelPath: '/assets/models/street/bauhaus.glb', position: [12, 0, -22],
+  { id: 'bauhaus_e', modelPath: '/assets/models/street/bauhaus.glb', position: [17, 0, -22],
     rotation: Math.PI, scale: 7,
     materialColors: { 'Material': '#f2ece0', 'wire_006135006': '#e0dcd4', 'MetalBars': '#b0a8a0' } },
 
@@ -85,7 +85,7 @@ export const streetProps: StreetPropData[] = [
 
   // ── Coca-Cola display prop — near café, east sidewalk ────────────────────
   // scale=0.3 → display bottle ~1.6 m tall; 'Floor' node hidden by scale
-  { id: 'coca_cola_e', modelPath: '/assets/models/street/coca_cola.glb', position: [10.5, 0, -9.5], scale: 0.3 },
+  { id: 'coca_cola_e', modelPath: '/assets/models/street/coca_cola.glb', position: [10.5, 0, -3.5], scale: 0.3 },
 
   // ── South terminus — closes the street visually ───────────────────────────
   { id: 'kb_e_house_a', modelPath: '/assets/models/buildings/building-sample-house-a.glb', position: [16, 0, -50], rotation: Math.PI, scale: 10 },

@@ -66,35 +66,36 @@ function CafeChair({ pos, rotY = 0 }: { pos: Vector3Tuple; rotY?: number }) {
 // (toward the road) on the west-side buildings.
 
 function GraffitiWall() {
-  // West building faces east at roughly x=-9 (outer edge of west buildings)
-  const faceX = -8.6
-  const rotY  = Math.PI / 2  // face east
+  // Panels sit just in front of the west building face (kb_w_tower_d east face ≈ x=-8.5)
+  const wallX  = -8.3   // background wall x — slightly in front of building face
+  const panelX = -8.25  // graffiti panels x — slightly in front of background
+  const rotY   = Math.PI / 2  // face east
 
   const panels = [
     // z=-3 cluster — large bold shapes
-    { pos: [faceX, 1.2, -2.5] as Vector3Tuple, args: [1.8, 2.0] as [number,number], color: '#e64060' },
-    { pos: [faceX, 1.0, -4.0] as Vector3Tuple, args: [1.2, 1.6] as [number,number], color: '#2a8fdf' },
-    { pos: [faceX, 1.6, -3.2] as Vector3Tuple, args: [0.9, 1.2] as [number,number], color: '#f5c030' },
+    { pos: [panelX, 1.2, -2.5] as Vector3Tuple, args: [1.8, 2.0] as [number,number], color: '#e64060' },
+    { pos: [panelX, 1.0, -4.0] as Vector3Tuple, args: [1.2, 1.6] as [number,number], color: '#2a8fdf' },
+    { pos: [panelX, 1.6, -3.2] as Vector3Tuple, args: [0.9, 1.2] as [number,number], color: '#f5c030' },
     // z=-8 cluster
-    { pos: [faceX, 1.3, -7.5] as Vector3Tuple, args: [2.2, 2.2] as [number,number], color: '#7030c0' },
-    { pos: [faceX, 0.9, -9.0] as Vector3Tuple, args: [1.4, 1.4] as [number,number], color: '#40b870' },
-    { pos: [faceX, 1.8, -8.0] as Vector3Tuple, args: [0.8, 0.8] as [number,number], color: '#ff7820' },
+    { pos: [panelX, 1.3, -7.5] as Vector3Tuple, args: [2.2, 2.2] as [number,number], color: '#7030c0' },
+    { pos: [panelX, 0.9, -9.0] as Vector3Tuple, args: [1.4, 1.4] as [number,number], color: '#40b870' },
+    { pos: [panelX, 1.8, -8.0] as Vector3Tuple, args: [0.8, 0.8] as [number,number], color: '#ff7820' },
     // z=-13 cluster
-    { pos: [faceX, 1.1, -12.5] as Vector3Tuple, args: [1.6, 1.8] as [number,number], color: '#20a8e0' },
-    { pos: [faceX, 0.9, -14.0] as Vector3Tuple, args: [2.0, 1.4] as [number,number], color: '#e83880' },
-    { pos: [faceX, 1.7, -13.2] as Vector3Tuple, args: [1.0, 1.0] as [number,number], color: '#88dd44' },
+    { pos: [panelX, 1.1, -12.5] as Vector3Tuple, args: [1.6, 1.8] as [number,number], color: '#20a8e0' },
+    { pos: [panelX, 0.9, -14.0] as Vector3Tuple, args: [2.0, 1.4] as [number,number], color: '#e83880' },
+    { pos: [panelX, 1.7, -13.2] as Vector3Tuple, args: [1.0, 1.0] as [number,number], color: '#88dd44' },
     // z=-18 cluster
-    { pos: [faceX, 1.4, -17.8] as Vector3Tuple, args: [1.8, 2.4] as [number,number], color: '#f0a020' },
-    { pos: [faceX, 1.0, -19.5] as Vector3Tuple, args: [1.4, 1.6] as [number,number], color: '#c030c0' },
-    { pos: [faceX, 2.0, -18.5] as Vector3Tuple, args: [0.7, 0.7] as [number,number], color: '#40e8e0' },
+    { pos: [panelX, 1.4, -17.8] as Vector3Tuple, args: [1.8, 2.4] as [number,number], color: '#f0a020' },
+    { pos: [panelX, 1.0, -19.5] as Vector3Tuple, args: [1.4, 1.6] as [number,number], color: '#c030c0' },
+    { pos: [panelX, 2.0, -18.5] as Vector3Tuple, args: [0.7, 0.7] as [number,number], color: '#40e8e0' },
   ]
 
   return (
     <>
-      {/* Background plaster wall — slightly off-white, entire stretch */}
-      <mesh position={[faceX, 1.5, -12]} rotation={[0, rotY, 0]}>
+      {/* Background plaster wall — polygonOffset pushes it behind graffiti panels */}
+      <mesh position={[wallX, 1.5, -12]} rotation={[0, rotY, 0]}>
         <planeGeometry args={[28, 3.5]} />
-        <meshStandardMaterial color="#d8c8a8" roughness={0.95} />
+        <meshStandardMaterial color="#d8c8a8" roughness={0.95} polygonOffset polygonOffsetFactor={1} polygonOffsetUnits={1} />
       </mesh>
 
       {panels.map((p, i) => (
@@ -366,6 +367,7 @@ export function StreetDetails() {
       <StreetCat pos={[7.5, 0, -1.5]} rotY={0.4} color="#c87840" />
       <StreetCat pos={[-5.8, 0.01, -14.5]} rotY={Math.PI + 0.3} color="#888880" />
       <StreetCat pos={[9.2, 0, -18.0]} rotY={-0.8} color="#e0c0a0" />
+      <StreetCat pos={[-6.5, 0, -2.5]} rotY={-0.6} color="#807060" />
 
       {/* Street kiosk / newsstand — west side */}
       <StreetKiosk pos={[-8.5, 0, -22]} rotY={Math.PI / 2} />

@@ -17,7 +17,7 @@ const BOXES: Box[] = [
   // ── Kenney modular buildings (approximate at scale=9–10) ────────────────
   { cx:  16, cz:  -5, hw: 4.5, hd: 4.5 }, // kb_e_tower_c
   // kb_e_house_b replaced by Bauhaus — collision now from Bauhaus footprint
-  { cx:  12, cz: -22, hw: 7.5, hd: 5.5 }, // bauhaus_e (scale=7, ~15m wide, 11m deep)
+  { cx:  17, cz: -22, hw: 7.0, hd: 5.5 }, // bauhaus_e (moved to x=17; west edge x=10, keeps sidewalk clear)
   { cx:  16, cz: -38, hw: 4.5, hd: 4.5 }, // kb_e_tower_a
   { cx: -13, cz:  -2, hw: 4.5, hd: 4.5 }, // kb_w_tower_d
   { cx: -16, cz: -27, hw: 5.0, hd: 5.0 }, // kb_w_tower_b
@@ -30,7 +30,7 @@ const BOXES: Box[] = [
   // ── Parked cars – west curb (x ≈ -4.5, rotated to face road) ────────────
   { cx: -4.5, cz:  -8, hw: 1.00, hd: 0.70 }, // car_w_hatch
   { cx: -4.5, cz: -20, hw: 1.10, hd: 0.75 }, // car_w_sport
-  { cx: -4.5, cz: -36, hw: 1.25, hd: 0.80 }, // car_w_suv
+  { cx: -4.5, cz: -32, hw: 1.25, hd: 0.80 }, // car_w_suv
 
   // ── New south terminus building ─────────────────────────────────────────
   { cx: 16, cz: -50, hw: 4.5, hd: 4.5 },   // kb_e_house_a
